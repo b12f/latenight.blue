@@ -60,6 +60,7 @@ function App(){
 
             function onPlayerReady(event){
                 player.YTVideo = event.target;
+                player.YTPlayer.unMute();
                 player.YTPlayer.setVolume(100);
                 player.togglePlay();
             }
