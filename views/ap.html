@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+    <head>
+      <meta name="theme-color" content="#282c34">
+      <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+        <title><%= vars.title %></title>
+        <%
+            for(var i=0; i< stylesheets.length; i++){
+                %>
+        <link href="<%= stylesheets[i] %>" rel="stylesheet" />
+                <%
+            }
+          %>
+    </head>
+    <body>
+<div id="error"><%
+        if(typeof error !== 'undefined'){
+            %><%= error %><%
+        }
+    %></div>
+<div id="success"><%
+        if(typeof success !== 'undefined'){
+            %><%= success %><%
+        }
+    %></div>
+        <main id="main">
+            <header>
+                <a href="<%= vars.homeurl %>"><h1><%= vars.title %></h1></a>
+            </header>
+            <form method="post" action="/ap">
+                <div id="title" type="text" <% if(typeof song !== 'undefined'){%>value="<%= song.title %>"<% } %> placeholder="Title" name="title" required></div><br />
+                <div id="artist" type="text" <% if(typeof song !== 'undefined'){%>value="<%= song.artist %>"<% } %> placeholder="Artist" name="artist" required></div><br />
+                <div id="album" type="text" <% if(typeof song !== 'undefined'){%>value="<%= song.album %>"<% } %> placeholder="Album" name="album" required></div><br />
+                <div id="url" type="text" <% if(typeof song !== 'undefined'){%>value="<%= song.url %>"<% } %> placeholder="Youtube link" name="url" required></div><br />
+                <input type="submit" value="Submit" name="submit" />
+            </form>
+            <br />
+            <hr />
+            <br />
+            <form method="post" action="/ap">
+              <h3>Queue</h3>
+              <div id="queue">
+                <%
+                if(queue.length>0){
+                    for(var i=0; i< queue.length; i++){
+                      var queueSong = queue[i];
+                        %>
+                <div class="entry"><a href="<%= queueSong.url %>" target="_blank"><%= queueSong.artist %> - <%= queueSong.title %></a> <div class="buttons"><button type="submit" name="publishID" value="<%= queueSong.id %>">Publish</button> <button type="submit" name="deleteID" value="<%= queueSong.id %>">Delete</button></div></div>
+                        <%
+                    }
+                  }
+                  else {
+                  %>
+                  <div class="entry">Queue is empty.</div>
+                  <%
+                  }
+                  %>
+              </div>
+            </form>
+        </main>
+        <script type="text/javascript">
+        var playlist = <%= JSON.stringify(playlist) %>
+        </script>
+        <%
+            for(var i=0; i< scripts.length; i++){
+                %>
+        <script type="text/javascript" src="<%= scripts[i] %>"></script>
+                <%
+            }
+        %>
+
+        </script>
+    </body>
+</html>

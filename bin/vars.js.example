@@ -1,0 +1,11 @@
+var vars = {
+  homeurl: 'http://latenight.blue/',
+  title: 'latenight.blue',
+  apPassword: 'asdfasdfs',
+  adminUser: 'asdfasdfasd',
+  development: false,
+  playlistDir: './data/playlist',
+  queueDir: './data/queue',
+}
+
+module.exports = vars;
