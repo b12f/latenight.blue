@@ -326,7 +326,7 @@ function App(){
     }
 
     app.addHistory = function(){
-      history.pushState({index:player.index}, "episode "+player.episode() +" of latenight.blue", ""+player.episode());
+      history.replaceState({index:player.index}, "episode "+player.episode() +" of latenight.blue", ""+player.episode());
       $("#pagetitle").innerHTML = "episode "+player.episode() +" of latenight.blue";
       ga('send', {
         'hitType': 'pageview',
