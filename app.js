@@ -5,7 +5,6 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var _ = require('underscore');
 var consolidate = require('consolidate');
 var forceDomain = require('forcedomain');
 var compression = require('compression');
