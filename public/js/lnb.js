@@ -131,7 +131,7 @@ function App(){
                 $("#playpausebutton").setAttribute("class", "iconicstroke-pause");
             }
         },
-        startPlayBack: function(){
+        startPlayBack: function(addHistory){
           clearTimeout(player.skipTimeout);
 
           if(player.currentSong().deleted===true){
@@ -146,7 +146,9 @@ function App(){
                 }
                 , 990);
             $("#playpausebutton").setAttribute("class", "iconicstroke-pause");
-            app.addHistory();
+            if (addHistory) {
+              app.addHistory();
+            }
           }
         },
         next: function(){
@@ -154,12 +156,12 @@ function App(){
             if(player.index===player.playlist().length - 1){
                 app.updatePlaylist(function(){
                   player.index = 0;
-                  player.startPlayBack();
+                  player.startPlayBack(true);
                 });
             }
             else{
                 player.index++;
-                player.startPlayBack();
+                player.startPlayBack(true);
             }
         },
         previous: function(){
@@ -170,13 +172,13 @@ function App(){
             else{
                 player.index--;
             }
-            player.startPlayBack();
+            player.startPlayBack(true);
         },
-        goTo: function(index){
+        goTo: function(index, addHistory){
             // Go to song
             if(typeof index === "number" && 0 <= index < player.playlist().length ){
               player.index = index;
-              player.startPlayBack();
+              player.startPlayBack(addHistory);
             }
         },
         currentSong: function(){
@@ -332,7 +334,7 @@ function App(){
       });
     }
 
-    app.handlePopState = function(){
+    app.handlePopState = function(event){
       var episode = parseInt(window.location.pathname.substr(1));
       player.index = 0;
       if(!isNaN(episode) && typeof episode === "number" && 0 <= episode < player.playlist().length ){
@@ -345,7 +347,7 @@ function App(){
       }
 
       if(player.YTPlayer!==undefined){
-        player.goTo(player.index);
+        player.goTo(player.index, false);
       }
     }
 
@@ -370,6 +372,8 @@ function App(){
         app.updatePlaylist(function() {
 
           app.handlePopState();
+
+          window.onpopstate = app.handlePopState;
 
             // Create and init player
             app.player.init();
