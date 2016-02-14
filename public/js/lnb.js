@@ -336,10 +336,11 @@ function App(){
 
     app.handlePopState = function(event){
       var episode = parseInt(window.location.pathname.substr(1));
+
       player.index = 0;
       if(!isNaN(episode) && typeof episode === "number" && 0 <= episode < player.playlist().length ){
         for(var i = 0; i < player.playlist().length; i++){
-          if(player.playlist()[i].episode===episode){
+          if(player.playlist()[i].episode === episode){
             player.index = i;
             break;
           }
