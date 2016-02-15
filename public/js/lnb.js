@@ -226,6 +226,26 @@ function App(){
             app.addClass(shuffleButton,"glow");
           }
         },
+        toggleVolume: function(){
+          var volumeButton = $("#toggleVolume");
+          if(player.YTPlayer.isMuted()){
+            player.YTPlayer.unMute();
+            $("#volume").style.width = player.YTPlayer.getVolume()+"%";
+            app.removeClass(volumeButton,"iconicstroke-volume-mute");
+            app.addClass(volumeButton,"iconicstroke-volume");
+          }
+          else {
+            player.YTPlayer.mute();
+            $("#volume").style.width = "0%";
+            app.removeClass(volumeButton,"iconicstroke-volume");
+            app.addClass(volumeButton,"iconicstroke-volume-mute");
+          }
+        },
+        setVolume: function(event) {
+          var newVolume = Math.ceil(event.offsetX/50 * 100);
+          $("#volume").style.width = newVolume+"%";
+          player.YTPlayer.setVolume(newVolume);
+        },
         shuffle: function(){
           player.shuffledPlaylist = JSON.parse(JSON.stringify(player.originalPlaylist));
           var counter = player.playlist().length - 1;
@@ -397,10 +417,10 @@ function App(){
                     }
 
                     if(typeof player[funcName] === "function"){
-                        player[funcName]();
+                        player[funcName](event);
                     }
                     else if(typeof app[funcName] === "function"){
-                        app[funcName]();
+                        app[funcName](event);
                     }
                 }
             }
@@ -425,8 +445,7 @@ function App(){
         }
     }
 
-    app.getStyle =  function(el,styleProp)
-    {
+    app.getStyle =  function(el,styleProp) {
       if (el.currentStyle){
         var y = el.currentStyle[styleProp];
       }

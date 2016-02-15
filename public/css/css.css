@@ -165,10 +165,6 @@ input:active, button:active {
 #mobilewarning {
   display: none;
 }
-
-#queue {
-
-}
 .entry {
   width: 100%;
   overflow: hidden;
@@ -180,6 +176,45 @@ input:active, button:active {
   margin-top: -5px;
   float: right;
 }
+
+#volumeWrap {
+  display: inline-block;
+  overflow: hidden;
+  height: 28px;
+  width: 21px;
+  margin-bottom: -6px;
+  transition: width 0.2s ease-out;
+  -webkit-transition: width 0.2s ease-out;
+}
+#volumeWrap:hover {
+  width: 80px;
+}
+#toggleVolumeWrap {
+  padding-top: 2px;
+}
+#volumeWrap > * {
+  height: 100%;
+  display: inline-block;
+}
+#volumeBar {
+  overflow: hidden;
+  margin-bottom: 3px;
+  width: 0px;
+  height: 4px;
+  background-color: rgba(255, 255, 255, 0.3);
+  transition: width 0.25s ease-out;
+  -webkit-transition: width 0.25s ease-out;
+}
+#volumeWrap:hover #volumeBar {
+  width: 50px;
+}
+#volume {
+  background-color: white;
+  height: 4px;
+  display: block;
+  float: left;
+}
+
 @media screen and (max-width: 1000px) {
   #main {
       width: 70vw;
