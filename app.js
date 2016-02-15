@@ -6,7 +6,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var consolidate = require('consolidate');
-var forceDomain = require('forcedomain');
+var forceDomain = require('express-force-domain');
 var compression = require('compression');
 var vars = require('./bin/vars');
 
@@ -30,11 +30,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
+app.use(forceDomain(vars.homeurl.slice(0, -1)));
 
-app.use(forceDomain({
-  hostname: vars.homeurl
-}));
+app.use('/', routes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
