@@ -186,6 +186,9 @@ input:active, button:active {
   transition: width 0.2s ease-out;
   -webkit-transition: width 0.2s ease-out;
 }
+#toggleVolume {
+  font-size: 17px;
+}
 #volumeWrap:hover {
   width: 80px;
 }
