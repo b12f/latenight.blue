@@ -141,6 +141,13 @@ input:hover, button:hover {
 input:active, button:active {
     border-color: rgba(255,255,255,1);
 }
+p {
+
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: lighter;
+    letter-spacing: 0.5px;
+}
 .small {
     font-size: 14px;
 }
@@ -155,7 +162,7 @@ input:active, button:active {
     width: 45%;
     margin-left: 5%;
 }
-#player {
+#player, #about {
     display: none;
 }
 #timeIndex, #length {

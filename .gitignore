@@ -4,3 +4,4 @@ bin/vars.js
 npm-debug.log
 data/queue/**
 data/playlist/**
+.idea/

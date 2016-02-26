@@ -128,7 +128,7 @@ function App(){
                 player.updateCallback = setInterval(function(){
                         player.updateTime();
                     }
-                    , 990);
+                    , 1000);
                 $("#playpausebutton").setAttribute("class", "iconicstroke-pause");
             }
         },
@@ -145,7 +145,7 @@ function App(){
             player.updateCallback = setInterval(function(){
                     player.updateTime();
                 }
-                , 990);
+                , 1000);
             $("#playpausebutton").setAttribute("class", "iconicstroke-pause");
             if (addHistory) {
               app.addHistory();
@@ -196,13 +196,22 @@ function App(){
             };
         },
         togglePlayerShow: function(){
-          var playerDiv = $("#player");
-          if(app.getStyle(playerDiv,"display")==="none"){
-            playerDiv.style.display = "block";
-          }
-          else{
-            playerDiv.style.display = "none";
-          }
+            var playerDiv = $("#player");
+            if(app.getStyle(playerDiv,"display")==="none"){
+                playerDiv.style.display = "block";
+            }
+            else{
+                playerDiv.style.display = "none";
+            }
+        },
+        toggleInfoShow: function(){
+            var aboutDiv = $("#about");
+            if(app.getStyle(aboutDiv,"display")==="none"){
+                aboutDiv.style.display = "block";
+            }
+            else{
+                aboutDiv.style.display = "none";
+            }
         },
         indexInPlaylist: function(playlist){
           for(var i = 0; i < playlist.length; i++){

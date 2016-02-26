@@ -10,10 +10,10 @@
         if(typeof episode === "object" && episode.episode!=""){
           %>
             <title id="pagetitle">episode <%= episode.episode %> of <%= vars.title %></title>
-          <meta name="description" content="<%= episode.title %> by <%= episode.artist %>. Episode <%= episode.episode %> of <%= vars.title %>. | Handpicked EDM." />
+          <meta name="description" content="<%= episode.title %> by <%= episode.artist %>. Episode <%= episode.episode %> of <%= vars.title %>. | Handpicked Minimal Music." />
           <meta name="keywords" content="minimal, techno, edm, playlist, radio, deep, house, techhouse, underground, late night blue, <%= episode.title %>, <%= episode.artist %>" />
 
-          <meta property="og:description" content="<%= episode.title %> by <%= episode.artist %>. Episode <%= episode.episode %> of <%= vars.title %>. | Handpicked EDM." />
+          <meta property="og:description" content="<%= episode.title %> by <%= episode.artist %>. Episode <%= episode.episode %> of <%= vars.title %>. | Handpicked Minimal Music." />
           <meta property="og:title" content="episode <%= episode.episode %> of <%= vars.title %>" />
           <meta property="og:url" content="<%= vars.homeurl + episode.episode %>" />
           <%
@@ -28,10 +28,10 @@
           }
           %>
           <title id="pagetitle"><%= vars.title %></title>
-          <meta name="description" content="Handpicked EDM." />
+          <meta name="description" content="Handpicked Minimal Music." />
           <meta name="keywords" content="minimal, techno, edm, playlist, radio, free, deep, house, techhouse, underground, late night blue" />
 
-          <meta property="og:description" content="Handpicked EDM." />
+          <meta property="og:description" content="Handpicked Minimal Music." />
           <meta property="og:title" content="<%= vars.title %>" />
           <meta property="og:url" content="<%= vars.homeurl %>" />
           <%
@@ -64,7 +64,6 @@
                 <span>episode</span> <span id="episode"><%= episode.episode %></span>
             </header>
             <div id="wrap">
-
                 <a id="url" title="View on Youtube" target="_blank" href="<%= episode.url %>"><h2 id="title"><%= episode.title %></h2>
                 <span id="artist"><%= episode.artist %></span> <span>-</span> <span id="album"><%= episode.album %></span>
                 </a><br /><br />
@@ -88,8 +87,21 @@
                     <a title="Shuffle" href="javascript:void(0)" id="toggleShuffle" data-action="toggleShuffle"><span class="iconicstroke-fork"></span></a>
                     <a title="Fullscreen" href="javascript:void(0)" id="toggleFullscreen" data-action="toggleFullscreen"><span class="iconicstroke-fullscreen"></span></a>
                     <a title="Show Youtube player" href="javascript:void(0)" id="togglePlayerShow" data-action="togglePlayerShow"><span class="iconicstroke-eye"></span></a>
-                    <a title="Go to Facebook page" target="_blank" href="https://www.facebook.com/latenight.blue" ><span class="iconicstroke-info"></span></a>
+                    <a title="Show information" target="_blank" href="javascript:void(0)" id="toggleInfoShow" data-action="toggleInfoShow" ><span class="iconicstroke-info"></span></a>
                     <br /><br />
+                    <div id="about" class="hidden">
+                        <p>
+                            This is a carefully curated collection of minimalist music. It aims to provide no fluff, no unnecessary extras.
+                        </p>
+                        <p>
+                            If you enjoy this music, please consider using adblock and supporting the artists directly by buying their tracks or seeing them live.
+                        </p>
+                        <p>
+                            <a title="Go to Facebook page" target="_blank" href="https://www.facebook.com/latenight.blue" >fb</a> -
+                            <a title="Go to Github page" target="_blank" href="https://github.com/b12f/latenight.blue" >Github</a> -
+                            <a title="Go to subreddit" target="_blank" href="https://www.reddit.com/r/latenightblue" >Reddit</a>
+                        </p>
+                    </div>
               </div>
             </div>
         </main>

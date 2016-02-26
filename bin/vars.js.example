@@ -1,9 +1,9 @@
 var vars = {
   homeurl: 'http://latenight.blue/',
   title: 'latenight.blue',
-  apPassword: 'asdfasdfs',
-  adminUser: 'asdfasdfasd',
-  development: false,
+  adminPassword: 'asdf',
+  adminUser: 'asdf',
+  apRoute: '/admin',
   playlistDir: './data/playlist',
   queueDir: './data/queue',
 }

@@ -18,7 +18,7 @@ var auth = function (req, res, next) {
     return unauthorized(res);
   };
 
-  if (user.name === vars.adminUser && user.pass === vars.apPassword) {
+  if (user.name === vars.adminUser && user.pass === vars.adminPassword) {
     return next();
   } else {
     return unauthorized(res);
@@ -46,7 +46,7 @@ router.get('/playlist', function(req, res, next) {
     });
 });
 /* Post new song */
-router.post('/ap', auth, function(req, res, next) {
+router.post(vars.apRoute, auth, function(req, res, next) {
   console.log(req.body.deleteID);
     if(req.body.deleteID){
         methods.delete(req.body.deleteID, function(err, song){
