@@ -1,6 +1,6 @@
 # latenight.blue
 
-This is the source for latenight.blue. Lnb is a carefully curated collection of minimalist music. It aims to provide no fluff, no unnecessary extras.
+This is the source for [latenight.blue](http://latenight.blue). Lnb is a carefully curated collection of minimalist music. It aims to provide no fluff, no unnecessary extras.
 
 # Try it out
 Clone the repository
