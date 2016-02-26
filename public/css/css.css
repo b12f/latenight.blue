@@ -33,7 +33,7 @@ body {
     height: 100%;
 }
 #main {
-    margin: 15vh 20px auto 20px;
+    margin: 15vh 20px 15vh 20px;
     width: 40vw;
     min-width: 600px;
     max-width: 90vw;

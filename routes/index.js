@@ -140,7 +140,11 @@ router.get(['/:id(\\d+)/', '/'], function(req, res, next) {
     });
   }
   else {
-    res.render('index', res.locals.pageOptions);
+      methods.getPlaylist(function(playlist) {
+          res.locals.pageOptions.episode = playlist[0];
+          console.log(playlist[0]);
+          res.render('index', res.locals.pageOptions);
+      });
   }
 });
 

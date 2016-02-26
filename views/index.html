@@ -67,7 +67,6 @@
                 <a id="url" title="View on Youtube" target="_blank" href="<%= episode.url %>"><h2 id="title"><%= episode.title %></h2>
                 <span id="artist"><%= episode.artist %></span> <span>-</span> <span id="album"><%= episode.album %></span>
                 </a><br /><br />
-                <span id="mobilewarning">Unfortunately, the YouTube API does not allow the autoplay of videos on mobile devices.</span><br />
                 <div id="playerWrap">
                     <a title="Previous" href="javascript:void(0)" id="previous" data-action="previous"><span class="iconicstroke-first nomargin"></span></a>
                     <a title="Play / Pause" href="javascript:void(0)" id="playpause" data-action="togglePlay"><span class="iconicstroke-play" id="playpausebutton"></span></a>
@@ -89,6 +88,7 @@
                     <a title="Show Youtube player" href="javascript:void(0)" id="togglePlayerShow" data-action="togglePlayerShow"><span class="iconicstroke-eye"></span></a>
                     <a title="Show information" target="_blank" href="javascript:void(0)" id="toggleInfoShow" data-action="toggleInfoShow" ><span class="iconicstroke-info"></span></a>
                     <br /><br />
+                    <p id="mobilewarning">Unfortunately, the YouTube API does not allow the autoplay of videos on mobile devices. To start, press the eye and start the video by hand.</p>
                     <div id="about" class="hidden">
                         <p>
                             This is a carefully curated collection of minimalist music. It aims to provide no fluff, no unnecessary extras.
