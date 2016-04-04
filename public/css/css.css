@@ -162,16 +162,18 @@ p {
     width: 45%;
     margin-left: 5%;
 }
-#player, #about {
+.player,
+#about,
+#mobilewarning {
     display: none;
+}
+.player.currentPlayer.show {
+    display: block;
 }
 #timeIndex, #length {
     min-width: 35px;
 }
 
-#mobilewarning {
-  display: none;
-}
 .entry {
   width: 100%;
   overflow: hidden;

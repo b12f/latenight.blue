@@ -58,13 +58,6 @@ function App(){
 
             var videoId = player.getYTId(player.currentSong().url);
 
-            function onPlayerReady(event){
-                player.YTVideo = event.target;
-                player.YTPlayer.unMute();
-                player.YTPlayer.setVolume(100);
-                player.togglePlay();
-            }
-
             function onPlayerStateChange(){
                 var song = player.currentSong();
                 $('#title').innerHTML = song.title;
@@ -73,21 +66,6 @@ function App(){
                 $('#album').innerHTML = song.album;
                 $('#length').innerHTML = player.vidLength();
                 $('#url').setAttribute("href", song.url);
-
-                switch(player.YTPlayer.getPlayerState()){
-                    case 3: // buffering
-                        //$('#status').style.display = "block";
-                        //$('#status').innerHTML = "Buffering...";
-                    break;
-                    case 0: // ended
-                        //$('#status').style.display = "block";
-                        //$('#status').innerHTML = "Loading...";
-                        player.next();
-                    break;
-                    default: // playing
-                        //$('#status').style.display = "none";
-                        //$('#status').innerHTML = "";
-                }
             }
 
             function onError(err){
@@ -100,21 +78,39 @@ function App(){
               console.log(err);
             }
             //Append div to replace
-            var playerDiv = document.createElement('div');
-            playerDiv.id = "player";
-            $('#playerWrap').appendChild(playerDiv);
+            var YTplayerDiv = document.createElement('div');
+            YTplayerDiv.id = 'YTplayer';
+            YTplayerDiv.class = 'player';
+            $('#playerWrap').appendChild(YTplayerDiv);
 
             // init player
-            app.player.YTPlayer = new YT.Player('player', {
+            app.player.YTPlayer = new YT.Player('YTplayer', {
                 height: '390',
                 width: '640',
                 videoId: videoId,
                 events: {
-                    'onReady': onPlayerReady,
+                    'onReady': function onYTPlayerReady(event){
+                        player.YTVideo = event.target;
+                        player.YTPlayer.unMute();
+                        player.YTPlayer.setVolume(100);
+                        player.togglePlay();
+                    },
                     'onStateChange': onPlayerStateChange,
                     "onError": onError
                 }
             });
+
+            var SCplayerDiv = document.createElement('iframe');
+            SCplayerDiv.id = 'SCplayer';
+            SCplayerDiv.class = 'player';
+            $('#playerWrap').appendChild(SCplayerDiv);
+
+            app.player.SCPlayer = SC.Widget('SCplayer');
+            app.player.SCPlayer.bind(SC.Widget.Events.READY, function onSCPlayerReady () {
+                app.player.SCPlayer.setVolume(100);
+            })
+            app.player.SCPlayer.bind(SC.Widget.Events.ERROR, onError);
+            app.player.SCPlayer.bind(SC.Widget.Events.PLAY, onPlayerStateChange);
         },
         togglePlay: function(){
             // Toggle play / pause
@@ -185,6 +181,15 @@ function App(){
         currentSong: function(){
             return player.playlist()[player.index];
         },
+        getHost: function(url) {
+            if (url.indexOf('youtube.com/') > -1) {
+                return 'youtube';
+            } else if (url.indexOf('soundcloud.com/') > -1) {
+                return 'soundcloud';
+            } else {
+                return false;
+            }
+        },
         getYTId: function(url){
             var regExp = /.*(?:youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/;
             var match = url.match(regExp);
@@ -196,13 +201,8 @@ function App(){
             };
         },
         togglePlayerShow: function(){
-            var playerDiv = $("#player");
-            if(app.getStyle(playerDiv,"display")==="none"){
-                playerDiv.style.display = "block";
-            }
-            else{
-                playerDiv.style.display = "none";
-            }
+            var playerDiv = $(".player.currentPlayer").first();
+            playerDiv.toggleClass('show');
         },
         toggleInfoShow: function(){
             var aboutDiv = $("#about");
@@ -451,6 +451,24 @@ function App(){
         }
         else{
             el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+        }
+    }
+
+    app.hasClass = function(el, className){
+        className = " " + className + " ";
+        return (" " + element.className + " ").replace(/[\n\t]/g, " ").indexOf(className) > -1;
+    }
+
+    app.toggleClass = function(el, className) {
+        if (el.classList){
+            el.classList.toggle(className);
+        }
+        else{
+            if (app.hasClass(el, className)) {
+                app.removeClass(el, className);
+            } else {
+                app.addClass(el, className);
+            }
         }
     }
 

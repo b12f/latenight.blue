@@ -26,7 +26,7 @@
             <header>
                 <a href="<%= vars.homeurl %>"><h1><%= vars.title %></h1></a>
             </header>
-            <form method="post" action="/ap">
+            <form method="post">
                 <div id="title" type="text" <% if(typeof song !== 'undefined'){%>value="<%= song.title %>"<% } %> placeholder="Title" name="title" required></div><br />
                 <div id="artist" type="text" <% if(typeof song !== 'undefined'){%>value="<%= song.artist %>"<% } %> placeholder="Artist" name="artist" required></div><br />
                 <div id="album" type="text" <% if(typeof song !== 'undefined'){%>value="<%= song.album %>"<% } %> placeholder="Album" name="album" required></div><br />
@@ -36,7 +36,7 @@
             <br />
             <hr />
             <br />
-            <form method="post" action="/ap">
+            <form method="post">
               <h3>Queue</h3>
               <div id="queue">
                 <%

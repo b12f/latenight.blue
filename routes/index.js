@@ -104,7 +104,7 @@ router.post(vars.apRoute, auth, function(req, res, next) {
 });
 
 /* GET adminpanel. */
-router.all('/ap', auth, function(req, res, next) {
+router.all(vars.apRoute, auth, function(req, res, next) {
   methods.getPlaylist(function(playlist){
     methods.getQueue(function(queue){
       res.locals.pageOptions.scripts.push(vars.homeurl+'js/complete.ly.1.0.1.js');
@@ -121,6 +121,7 @@ router.all('/ap', auth, function(req, res, next) {
 
 router.get(['/:id(\\d+)/', '/'], function(req, res, next) {
   res.locals.pageOptions.scripts.push('https://www.youtube.com/iframe_api');
+  res.locals.pageOptions.scripts.push('https://w.soundcloud.com/player/api.js');
   res.locals.pageOptions.scripts.push(vars.homeurl+"js/lnb.js");
 
   var episode = parseInt(req.params.id);
