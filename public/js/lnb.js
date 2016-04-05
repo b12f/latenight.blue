@@ -299,7 +299,7 @@ function App() {
             return player.playlist()[player.index];
         },
         getHost: function(url) {
-            if (url.indexOf('youtube.com/') > -1) {
+            if (url.indexOf('youtube.com/') > -1 || url.indexOf('youtu.be/') > -1) {
                 return 'youtube';
             } else if (url.indexOf('soundcloud.com/') > -1) {
                 return 'soundcloud';
