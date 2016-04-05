@@ -190,8 +190,9 @@ function App(){
             $("#playpausebutton").setAttribute("class", "iconicstroke-pause");
         },
         pause: function() {
-            player.YTVideo.pauseVideo();
-            player.SCPlayer.pause();
+            if (player.YTVideo){player.YTVideo.pauseVideo();}
+            if (player.SCPlayer){player.SCPlayer.pause();}
+
             $("#playpausebutton").setAttribute("class", "iconicstroke-play");
             clearInterval(player.updateCallback);
         },
