@@ -514,21 +514,21 @@ function App() {
         else if (event.keyCode === 39) { // right arrow
             player.next();
         }
-        else if (even.keyCode === 102) { // f
+        else if (event.keyCode === 70) { // f
             app.toggleFullscreen();
         }
-        else if (even.keyCode === 109) { // m
+        else if (event.keyCode === 77) { // m
             player.toggleVolume();
         }
-        else if (even.keyCode === 111) { // i
+        else if (event.keyCode === 73) { // i
             player.toggleInfoShow();
         }
-        else if (even.keyCode === 118) { // v
+        else if (event.keyCode === 86) { // v
             player.togglePlayerShow();
         }
     };
 
-    app.init = function()
+    app.init = function() {
 
     if ($("#error").innerHTML !== "") {
         app.showError();
