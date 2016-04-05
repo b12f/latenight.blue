@@ -9,6 +9,7 @@
 * {
     margin: 0px;
     padding: 0px;
+    transform: background-color 0.2s ease-out, color 0.2s ease-out;
 }
 html {
   height:100%;
@@ -105,6 +106,7 @@ a.disabled{
 a.glow {
     text-shadow: 0px 0px 5px rgba(255, 255, 255, 1);
 }
+
 span {
     display: inline-block;
     min-height: 21px;
@@ -242,4 +244,24 @@ p {
       margin: 25px 10px 25px 10px;
       border: 8px solid white;
   }
+}
+
+body.ep100 {
+    background-color: #B0DFE5;
+    color: #3C3C3C;
+}
+.ep100 #main {
+    border-color: #3C3C3C;
+}
+.ep100 a {
+    color: #3C3C3C;
+}
+.ep100 a:hover {
+    text-shadow: 0px 0px 5px rgba(176, 223, 229, 0.6);
+}
+.ep100 a:active {
+    text-shadow: 0px 0px 5px rgba(176, 223, 229, 0.4);
+}
+.ep100 a.glow {
+    text-shadow: 0px 0px 5px rgba(176, 223, 229, 1);
 }
