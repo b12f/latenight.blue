@@ -167,7 +167,7 @@ p {
 #mobilewarning {
     display: none;
 }
-.player.currentPlayer.show {
+.showPlayer .player.currentPlayer {
     display: block;
 }
 #timeIndex, #length {

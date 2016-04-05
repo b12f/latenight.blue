@@ -6,6 +6,8 @@ var vars = {
   apRoute: '/admin',
   playlistDir: './data/playlist',
   queueDir: './data/queue',
+  gaId: 'UA-00000000-1',
+  scApiId: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 }
 
 module.exports = vars;

@@ -30,7 +30,8 @@
                 <div id="title" type="text" <% if(typeof song !== 'undefined'){%>value="<%= song.title %>"<% } %> placeholder="Title" name="title" required></div><br />
                 <div id="artist" type="text" <% if(typeof song !== 'undefined'){%>value="<%= song.artist %>"<% } %> placeholder="Artist" name="artist" required></div><br />
                 <div id="album" type="text" <% if(typeof song !== 'undefined'){%>value="<%= song.album %>"<% } %> placeholder="Album" name="album" required></div><br />
-                <div id="url" type="text" <% if(typeof song !== 'undefined'){%>value="<%= song.url %>"<% } %> placeholder="Youtube link" name="url" required></div><br />
+                <div id="url" type="text" <% if(typeof song !== 'undefined'){%>value="<%= song.url %>"<% } %> placeholder="Youtube or Soundcloud URL" name="url" required></div><br />
+                <p></p>
                 <input type="submit" value="Submit" name="submit" />
             </form>
             <br />

@@ -8,6 +8,7 @@ function App(){
     var app = this;
     app.player = {
         index: 0,
+        volume: 100,
         originalPlaylist: undefined,
         shuffledPlaylist: undefined,
         playlist: function(){
@@ -18,6 +19,7 @@ function App(){
             return player.originalPlaylist;
           }
         },
+        SCPlayer: undefined,
         YTPlayer: undefined,
         YTVideo: undefined,
         updateCallback: undefined,
@@ -37,26 +39,60 @@ function App(){
             }
             return minutes + ":" + seconds;
         },
-        vidLength: function(){
-            return player.convertTime(player.YTPlayer.getDuration());
+        vidLength: function(cb){
+            switch (player.getHost(player.currentSong().url)) {
+                case 'youtube':
+                    cb(player.convertTime(player.YTPlayer.getDuration()));
+                    break;
+                case 'soundcloud':
+                    player.SCPlayer.getDuration(function (duration) {
+                        cb(player.convertTime(duration/1000));
+                    });
+                    break;
+            }
         },
-        currentTime: function(){
-            return player.convertTime(player.YTPlayer.getCurrentTime());
+        currentTime: function(cb){
+            switch (player.getHost(player.currentSong().url)) {
+                case 'youtube':
+                    cb(player.convertTime(player.YTPlayer.getCurrentTime()));
+                    break;
+                case 'soundcloud':
+                    player.SCPlayer.getPosition(function (position) {
+                        cb(player.convertTime(position/1000));
+                    });
+                    break;
+            }
         },
         updateTime: function(){
-            $('#timeIndex').innerHTML = player.currentTime();
+            player.currentTime(function (time) {
+                $('#timeIndex').innerHTML = time;
+            });
         },
-        playing: function(){
-            if(player.YTPlayer.getPlayerState()===1||player.YTPlayer.getPlayerState()===3){
-                return true;
-            }
-            else{
-                return false;
+        playing: function(cb){
+            switch (player.getHost(player.currentSong().url)) {
+                case 'youtube':
+                    cb(player.YTPlayer.getPlayerState()===1||player.YTPlayer.getPlayerState()===3);
+                    break;
+                case 'soundcloud':
+                    player.SCPlayer.isPaused(function(isPaused) {
+                        cb(!isPaused);
+                    });
+                    break;
             }
         },
         init: function(){
+            var i = 0;
+            do {
+                var YTvideoId = player.getYTId(player.playlist()[i].url);
+                i++;
+            } while(YTvideoId === false && i < player.playlist().length);
 
-            var videoId = player.getYTId(player.currentSong().url);
+            i = 0;
+            var SCsoundUrl;
+            do {
+                SCsoundUrl = player.playlist()[i].url;
+                i++;
+            } while(player.getHost(SCsoundUrl) !== 'soundcloud' && i < player.playlist().length);
 
             function onPlayerStateChange(){
                 var song = player.currentSong();
@@ -64,8 +100,14 @@ function App(){
                 $('#episode').innerHTML = song.episode;
                 $('#artist').innerHTML = song.artist;
                 $('#album').innerHTML = song.album;
-                $('#length').innerHTML = player.vidLength();
+                player.vidLength(function (duration) {
+                    $('#length').innerHTML = duration;
+                });
                 $('#url').setAttribute("href", song.url);
+
+                if (player.getHost(song.url) === 'youtube' && player.YTPlayer.getPlayerState() === 0) {
+                    player.next();
+                }
             }
 
             function onError(err){
@@ -77,67 +119,129 @@ function App(){
               }, 3000);
               console.log(err);
             }
-            //Append div to replace
-            var YTplayerDiv = document.createElement('div');
-            YTplayerDiv.id = 'YTplayer';
-            YTplayerDiv.class = 'player';
-            $('#playerWrap').appendChild(YTplayerDiv);
 
-            // init player
-            app.player.YTPlayer = new YT.Player('YTplayer', {
-                height: '390',
-                width: '640',
-                videoId: videoId,
-                events: {
-                    'onReady': function onYTPlayerReady(event){
-                        player.YTVideo = event.target;
-                        player.YTPlayer.unMute();
-                        player.YTPlayer.setVolume(100);
-                        player.togglePlay();
-                    },
-                    'onStateChange': onPlayerStateChange,
-                    "onError": onError
+            if (YTvideoId !== false) {
+                //Append div to replace
+                var YTplayerDiv = document.createElement('div');
+                YTplayerDiv.id = 'YTplayer';
+                YTplayerDiv.className = 'player';
+                $('#playerWrap').appendChild(YTplayerDiv);
+
+                // init player
+                app.player.YTPlayer = new YT.Player('YTplayer', {
+                    height: '390',
+                    width: '640',
+                    videoId: YTvideoId,
+                    events: {
+                        'onReady': function onYTPlayerReady(event){
+                            player.YTVideo = event.target;
+                            player.YTPlayer.unMute();
+                            player.YTPlayer.setVolume(player.volume);
+                            player.play();
+                        },
+                        'onStateChange': onPlayerStateChange,
+                        "onError": onError
+                    }
+                });
+            }
+
+            if (player.getHost(SCsoundUrl) === 'soundcloud') {
+                var SCplayerDiv = document.createElement('iframe');
+                SCplayerDiv.id = 'SCplayer';
+                SCplayerDiv.className = 'player';
+
+                player.getSCId(SCsoundUrl, function(scApiData, error) {
+                    if (error) {
+                        app.showError("An error occurred contacting the Soundcloud API.");
+                        console.log(error);
+                        player.next();
+                        return;
+                    }
+
+                    SCplayerDiv.setAttribute('src', 'https://w.soundcloud.com/player/?url='+ encodeURIComponent(scApiData.uri) +'&amp;auto_play=false&amp;hide_related=true&amp;show_comments=true&amp;show_user=false&amp;show_reposts=false&amp;visual=true')
+                    $('#playerWrap').appendChild(SCplayerDiv);
+
+                    app.player.SCPlayer = SC.Widget('SCplayer');
+                    app.player.SCPlayer.setVolume(player.volume);
+                    app.player.SCPlayer.bind(SC.Widget.Events.READY, function onSCPlayerReady () {
+                        player.play();
+                    });
+                    app.player.SCPlayer.bind(SC.Widget.Events.ERROR, onError);
+                    app.player.SCPlayer.bind(SC.Widget.Events.PLAY, onPlayerStateChange);
+                    app.player.SCPlayer.bind(SC.Widget.Events.FINISH, player.next);
+                });
+            }
+        },
+        play: function() {
+            switch (player.getHost(player.currentSong().url)) {
+                case 'youtube':
+                    player.YTVideo.playVideo();
+                    app.addClass($('#YTplayer'), 'currentPlayer');
+                    break;
+                case 'soundcloud':
+                    player.SCPlayer.play();
+                    app.addClass($('#SCplayer'), 'currentPlayer');
+                    break;
+            }
+            player.updateCallback = setInterval(function(){
+                    player.updateTime();
                 }
-            });
-
-            var SCplayerDiv = document.createElement('iframe');
-            SCplayerDiv.id = 'SCplayer';
-            SCplayerDiv.class = 'player';
-            $('#playerWrap').appendChild(SCplayerDiv);
-
-            app.player.SCPlayer = SC.Widget('SCplayer');
-            app.player.SCPlayer.bind(SC.Widget.Events.READY, function onSCPlayerReady () {
-                app.player.SCPlayer.setVolume(100);
-            })
-            app.player.SCPlayer.bind(SC.Widget.Events.ERROR, onError);
-            app.player.SCPlayer.bind(SC.Widget.Events.PLAY, onPlayerStateChange);
+                , 1000);
+            $("#playpausebutton").setAttribute("class", "iconicstroke-pause");
+        },
+        pause: function() {
+            player.YTVideo.pauseVideo();
+            player.SCPlayer.pause();
+            $("#playpausebutton").setAttribute("class", "iconicstroke-play");
+            clearInterval(player.updateCallback);
         },
         togglePlay: function(){
             // Toggle play / pause
-            if(player.playing()){
-                player.YTVideo.pauseVideo();
-                $("#playpausebutton").setAttribute("class", "iconicstroke-play");
-                clearInterval(player.updateCallback);
-            }
-            else{
-                player.YTVideo.playVideo();
-                player.updateCallback = setInterval(function(){
-                        player.updateTime();
-                    }
-                    , 1000);
-                $("#playpausebutton").setAttribute("class", "iconicstroke-pause");
-            }
+            player.playing(function(isPlaying) {
+                if(isPlaying){
+                    player.pause();
+                }
+                else{
+                    player.play();
+                }
+            });
         },
         startPlayBack: function(addHistory){
           clearTimeout(player.skipTimeout);
 
           if(player.currentSong().deleted===true){
-              app.showError("Episode not found. Skipping.")
+              app.showError("Episode not found. Skipping.");
               player.next();
           }
           else{
-            player.YTPlayer.pauseVideo();
-            player.YTPlayer.loadVideoById(player.getYTId(player.currentSong().url));
+              app.removeClass($('.currentPlayer')[0], 'currentPlayer');
+              player.pause();
+
+              switch (player.getHost(player.currentSong().url)) {
+                  case 'youtube':
+                      player.YTPlayer.loadVideoById(player.getYTId(player.currentSong().url));
+                      player.play();
+                      break;
+                  case 'soundcloud':
+                      player.getSCId(player.currentSong().url, function (scApiData, error) {
+                          if (error) {
+                              app.showError("An error occurred contacting the Soundcloud API.");
+                              console.log(error);
+                              player.next();
+                              return;
+                          }
+                          player.SCPlayer.load(scApiData.uri);
+                          player.SCPlayer.bind(SC.Widget.Events.READY, function onSCPlayerReady () {
+                              player.SCPlayer.setVolume(player.volume/100);
+                              player.play();
+                          });
+                      });
+                      break;
+                  default:
+                      app.showError('An error occurred. Skipping.');
+                      player.next();
+                      break;
+              }
             player.updateCallback = setInterval(function(){
                     player.updateTime();
                 }
@@ -190,6 +294,9 @@ function App(){
                 return false;
             }
         },
+        getSCId: function(url, cb) {
+            app.getJSON('https://api.soundcloud.com/resolve.json?url='+ encodeURIComponent(url) +'&client_id=' + scApiId, cb);
+        },
         getYTId: function(url){
             var regExp = /.*(?:youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/;
             var match = url.match(regExp);
@@ -201,8 +308,8 @@ function App(){
             };
         },
         togglePlayerShow: function(){
-            var playerDiv = $(".player.currentPlayer").first();
-            playerDiv.toggleClass('show');
+            var playerDiv = $("#playerWrap");
+            app.toggleClass(playerDiv, 'showPlayer');
         },
         toggleInfoShow: function(){
             var aboutDiv = $("#about");
@@ -249,11 +356,13 @@ function App(){
             app.removeClass(volumeButton,"iconicstroke-volume");
             app.addClass(volumeButton,"iconicstroke-volume-mute");
           }
+            player.SCPlayer.toggle();
         },
         setVolume: function(event) {
-          var newVolume = Math.ceil(event.offsetX/50 * 100);
-          $("#volume").style.width = newVolume+"%";
-          player.YTPlayer.setVolume(newVolume);
+          player.volume = Math.ceil(event.offsetX/50 * 100);
+          $("#volume").style.width = player.volume+"%";
+          player.YTPlayer.setVolume(player.volume);
+            player.SCPlayer.setVolume(player.volume/100);
         },
         shuffle: function(){
           player.shuffledPlaylist = JSON.parse(JSON.stringify(player.originalPlaylist));
@@ -279,7 +388,7 @@ function App(){
           var songToAdd = player.shuffledPlaylist.splice(indexOfCurrentSong, 1);
           player.shuffledPlaylist.unshift(songToAdd[0]);
         }
-    }
+    };
 
     var player = app.player;
 
@@ -294,11 +403,11 @@ function App(){
                 app.showError("An error occurred updating the playlist.");
             }
         });
-    }
+    };
 
     app.hideError = function(){
       $("#error").style.display = "none";
-    }
+    };
 
     app.showError = function(message, time){
       $("#error").style.display = "block";
@@ -313,7 +422,7 @@ function App(){
           app.hideError();
         }, time);
       }
-    }
+    };
 
     app.showSuccess = function(message){
       $("#success").style.display = "block";
@@ -323,7 +432,7 @@ function App(){
       setTimeout(function(){
         $("#success").style.display = "none";
       }, 3000);
-    }
+    };
 
     app.toggleFullscreen = function(){
       var fullscreenbutton = $("#toggleFullscreen").children[0];
@@ -352,17 +461,17 @@ function App(){
           fullscreenbutton.className = "iconicstroke-fullscreen";
         }
 
-    }
+    };
 
     app.addHistory = function(){
-      history.replaceState({index:player.index}, "episode "+player.episode() +" of latenight.blue", ""+player.episode());
-      $("#pagetitle").innerHTML = "episode "+player.episode() +" of latenight.blue";
+      history.replaceState({index:player.index}, "Episode "+player.episode() +" of latenight.blue", ""+player.episode());
+      $("#pagetitle").innerHTML = "Episode "+player.episode() +" of latenight.blue";
       ga('send', {
         'hitType': 'pageview',
         'page': '/'+player.episode(),
-        'title': "episode "+player.episode() +" of latenight.blue"
+        'title': "Episode "+player.episode() +" of latenight.blue"
       });
-    }
+    };
 
     app.handlePopState = function(event){
       var episode = parseInt(window.location.pathname.substr(1));
@@ -377,10 +486,10 @@ function App(){
         }
       }
 
-      if(player.YTPlayer!==undefined){
+      if(player.YTPlayer!==undefined || player.SCPlayer!==undefined){
         player.goTo(player.index, false);
       }
-    }
+    };
 
     app.onKeyDown = function(event){
       if(event.keyCode === 32){
@@ -392,7 +501,7 @@ function App(){
       else if(event.keyCode === 39){
         player.next();
       }
-    }
+    };
 
     app.init = function(){
 
@@ -434,32 +543,36 @@ function App(){
                 }
             }
         });
-    }
+    };
 
     app.addClass = function(el, className){
+        if (!el){return;}
         if (el.classList){
           el.classList.add(className);
         }
         else{
           el.className += ' ' + className;
         }
-    }
+    };
 
     app.removeClass = function(el, className){
+        if (!el){return;}
         if (el.classList){
           el.classList.remove(className);
         }
         else{
             el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
         }
-    }
+    };
 
     app.hasClass = function(el, className){
+        if (!el){return;}
         className = " " + className + " ";
         return (" " + element.className + " ").replace(/[\n\t]/g, " ").indexOf(className) > -1;
-    }
+    };
 
     app.toggleClass = function(el, className) {
+        if (!el){return;}
         if (el.classList){
             el.classList.toggle(className);
         }
@@ -470,9 +583,10 @@ function App(){
                 app.addClass(el, className);
             }
         }
-    }
+    };
 
     app.getStyle =  function(el,styleProp) {
+      if (!el){return;}
       if (el.currentStyle){
         var y = el.currentStyle[styleProp];
       }
@@ -483,7 +597,7 @@ function App(){
         var y = undefined;
       }
       return y;
-    }
+    };
 
 
     app.getJSON = function(url, callback) {
@@ -507,7 +621,7 @@ function App(){
     }
 
 
-};
+}
 
 var app;
 function onYouTubeIframeAPIReady(){
