@@ -83,18 +83,27 @@ function App(){
         init: function(){
             $('body')[0].setAttribute('class', 'ep'+player.episode());
 
-            var i = 0;
-            do {
-                var YTvideoId = player.getYTId(player.playlist()[i].url);
-                i++;
-            } while(YTvideoId === false && i < player.playlist().length);
-
-            i = 0;
-            var SCsoundUrl;
-            do {
-                SCsoundUrl = player.playlist()[i].url;
-                i++;
-            } while(player.getHost(SCsoundUrl) !== 'soundcloud' && i < player.playlist().length);
+            switch (player.getHost(player.currentSong().url)) {
+                case 'youtube':
+                    var YTvideoId = player.getYTId(player.currentSong().url);
+                    var i = 0;
+                    var SCsoundUrl;
+                    do {
+                        SCsoundUrl = player.playlist()[i].url;
+                        i++;
+                    } while(player.getHost(SCsoundUrl) !== 'soundcloud' && i < player.playlist().length);
+                    break;
+                case 'soundcloud':
+                    var SCsoundUrl = player.currentSong().url;
+                    var i = 0;
+                    do {
+                        var YTvideoId = player.getYTId(player.playlist()[i].url);
+                        i++;
+                    } while(YTvideoId === false && i < player.playlist().length);
+                    break;
+                default:
+                    player.next();
+            }
 
             function onPlayerStateChange(){
                 var song = player.currentSong();
