@@ -82,7 +82,7 @@ function App(){
         },
         init: function(){
             $('body')[0].setAttribute('class', 'ep'+player.episode());
-            
+
             var i = 0;
             do {
                 var YTvideoId = player.getYTId(player.playlist()[i].url);
