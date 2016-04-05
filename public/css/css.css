@@ -262,11 +262,17 @@ body.ep100 {
     color: #3C3C3C;
 }
 .ep100 a:hover {
-    text-shadow: 0px 0px 5px rgba(176, 223, 229, 0.6);
+    text-shadow: 0px 0px 5px rgba(60, 60, 60, 0.4);
 }
 .ep100 a:active {
-    text-shadow: 0px 0px 5px rgba(176, 223, 229, 0.4);
+    text-shadow: 0px 0px 5px rgba(60, 60, 60, 0.3);
 }
 .ep100 a.glow {
-    text-shadow: 0px 0px 5px rgba(176, 223, 229, 1);
+    text-shadow: 0px 0px 5px rgba(60, 60, 60, 1);
+}
+.ep100 #volumeBar {
+    background-color: rgba(60, 60, 60, 0.4);
+}
+.ep100 #volume {
+    background-color: #3C3C3C;
 }
