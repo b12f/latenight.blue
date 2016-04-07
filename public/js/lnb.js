@@ -177,7 +177,6 @@ function App() {
                     app.player.SCPlayer.setVolume(player.volume);
                     app.player.SCPlayer.bind(SC.Widget.Events.READY, function onSCPlayerReady () {
                         player.play();
-                        if (player.isMuted) {player.SCPlayer.toggle();}
                     });
                     app.player.SCPlayer.bind(SC.Widget.Events.ERROR, onError);
                     app.player.SCPlayer.bind(SC.Widget.Events.PLAY, onPlayerStateChange);
@@ -247,6 +246,7 @@ function App() {
                             player.SCPlayer.load(scApiData.uri);
                             player.SCPlayer.bind(SC.Widget.Events.READY, function onSCPlayerReady () {
                                 player.SCPlayer.setVolume(player.volume/100);
+                                if (player.isMuted) {player.SCPlayer.setVolume(0);}
                                 player.play();
                             });
                         });
@@ -360,19 +360,20 @@ function App() {
         toggleVolume: function() {
             var volumeButton = $("#toggleVolume");
             if (player.YTPlayer.isMuted()) {
+                player.SCPlayer.setVolume(player.volume/100);
                 player.YTPlayer.unMute();
-                $("#volume").style.width = player.YTPlayer.getVolume()+"%";
+                $("#volume").style.width = player.volume+"%";
                 app.removeClass(volumeButton,"iconicstroke-volume-mute");
                 app.addClass(volumeButton,"iconicstroke-volume");
             }
             else {
+                player.SCPlayer.setVolume(0);
                 player.YTPlayer.mute();
                 $("#volume").style.width = "0%";
                 app.removeClass(volumeButton,"iconicstroke-volume");
                 app.addClass(volumeButton,"iconicstroke-volume-mute");
             }
             player.isMuted = !player.isMuted;
-            player.SCPlayer.toggle();
         },
         setVolume: function(event) {
             player.volume = Math.ceil(event.offsetX/50 * 100);
