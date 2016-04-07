@@ -9,6 +9,7 @@ function App() {
     app.player = {
         index: 0,
         volume: 100,
+        muted: false,
         originalPlaylist: undefined,
         shuffledPlaylist: undefined,
         playlist: function() {
@@ -176,6 +177,7 @@ function App() {
                     app.player.SCPlayer.setVolume(player.volume);
                     app.player.SCPlayer.bind(SC.Widget.Events.READY, function onSCPlayerReady () {
                         player.play();
+                        if (player.isMuted) {player.SCPlayer.toggle();}
                     });
                     app.player.SCPlayer.bind(SC.Widget.Events.ERROR, onError);
                     app.player.SCPlayer.bind(SC.Widget.Events.PLAY, onPlayerStateChange);
@@ -369,6 +371,7 @@ function App() {
                 app.removeClass(volumeButton,"iconicstroke-volume");
                 app.addClass(volumeButton,"iconicstroke-volume-mute");
             }
+            player.isMuted = !player.isMuted;
             player.SCPlayer.toggle();
         },
         setVolume: function(event) {
