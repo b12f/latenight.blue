@@ -12,6 +12,10 @@ function App() {
         muted: false,
         originalPlaylist: undefined,
         shuffledPlaylist: undefined,
+
+        /*
+         * Returns the currently used playlist
+         */
         playlist: function() {
             if (player.isShuffling) {
                 return player.shuffledPlaylist;
@@ -26,9 +30,17 @@ function App() {
         updateCallback: undefined,
         skipTimeout: undefined,
         isShuffling: false,
+
+        /*
+         * Returns the episode number of the current episode
+         */
         episode: function() {
             return player.currentSong().episode;
         },
+
+        /*
+         * Converts seconds into mm:ss format
+         */
         convertTime: function(totalSeconds) {
             var minutes = Math.floor(totalSeconds/60) + "";
             var seconds = Math.floor(totalSeconds - minutes * 60) + "";
@@ -40,6 +52,12 @@ function App() {
             }
             return minutes + ":" + seconds;
         },
+
+        /*
+         * Retrieves the length of the current song in seconds.
+         *
+         * Accepts a callback which will receive the length in seconds
+         */
         vidLength: function(cb) {
             switch (player.getHost(player.currentSong().url)) {
                 case 'youtube':
@@ -52,6 +70,12 @@ function App() {
                     break;
             }
         },
+
+        /*
+         * Gets the current time index
+         *
+         * Accepts a callback which will receive the time index in seconds
+         */
         currentTime: function(cb) {
             switch (player.getHost(player.currentSong().url)) {
                 case 'youtube':
@@ -64,11 +88,21 @@ function App() {
                     break;
             }
         },
+
+        /*
+         * Updates the time shown on the player
+         */
         updateTime: function() {
             player.currentTime(function (time) {
                 $('#timeIndex').innerHTML = time;
             });
         },
+
+        /*
+         * Returns whether the player is playing or not
+         *
+         * Accepts a callback which will receive a boolean
+         */
         playing: function(cb) {
             switch (player.getHost(player.currentSong().url)) {
                 case 'youtube':
@@ -79,8 +113,17 @@ function App() {
                         cb(!isPaused);
                     });
                     break;
+                default:
+                    cb(false);
             }
         },
+
+        /*
+         * Init function of the player.
+         *
+         * Loads the external players and inits them with a song. Initializes statechange and errorhandling functions
+         * for the players.
+         */
         init: function() {
             $('body')[0].setAttribute('class', 'ep'+player.episode());
 
@@ -184,6 +227,10 @@ function App() {
                 });
             }
         },
+
+        /*
+         * Unpauses
+         */
         play: function() {
             switch (player.getHost(player.currentSong().url)) {
                 case 'youtube':
@@ -201,6 +248,10 @@ function App() {
                 , 1000);
             $("#playpausebutton").setAttribute("class", "iconicstroke-pause");
         },
+
+        /*
+         * Pauses
+         */
         pause: function() {
             if (player.YTVideo) {player.YTVideo.pauseVideo();}
             if (player.SCPlayer) {player.SCPlayer.pause();}
@@ -208,6 +259,10 @@ function App() {
             $("#playpausebutton").setAttribute("class", "iconicstroke-play");
             clearInterval(player.updateCallback);
         },
+
+        /*
+         * Toggles play/pause
+         */
         togglePlay: function() {
             // Toggle play / pause
             player.playing(function(isPlaying) {
@@ -219,6 +274,12 @@ function App() {
                 }
             });
         },
+
+        /*
+         * Starts playback of a new song
+         *
+         * Accepts a boolean addHistory to specify whether a new html5 history entry should be made.
+         */
         startPlayBack: function(addHistory) {
             clearTimeout(player.skipTimeout);
 
@@ -267,6 +328,10 @@ function App() {
                 }
             }
         },
+
+        /*
+         * Skips to the next song in the current playlist
+         */
         next: function() {
             // Next song
             if (player.index===player.playlist().length - 1) {
@@ -280,6 +345,10 @@ function App() {
                 player.startPlayBack(true);
             }
         },
+
+        /*
+         * Skips to the previous song in the current playlist
+         */
         previous: function() {
             // Previous song
             if (player.index===0) {
@@ -290,6 +359,13 @@ function App() {
             }
             player.startPlayBack(true);
         },
+
+        /*
+         * Goes to a specific song
+         *
+         * Accepts an int index which specifies the index in the current playlist to skip to
+         * Accepts a boolean addHistory to specify whether a new html5 history entry should be made.
+         */
         goTo: function(index, addHistory) {
             // Go to song
             if (typeof index === "number" && 0 <= index < player.playlist().length ) {
@@ -297,9 +373,19 @@ function App() {
                 player.startPlayBack(addHistory);
             }
         },
+
+        /*
+         * returns the current song object
+         */
         currentSong: function() {
             return player.playlist()[player.index];
         },
+
+        /*
+         * returns the host of the url ('youtube', 'soundcloud') or false if none found
+         *
+         * Accepts a string url of the song
+         */
         getHost: function(url) {
             if (url.indexOf('youtube.com/') > -1 || url.indexOf('youtu.be/') > -1) {
                 return 'youtube';
@@ -309,9 +395,22 @@ function App() {
                 return false;
             }
         },
+
+        /*
+         * Asynchronously returns the API data of a soundcloud sound
+         *
+         * Accepts a string url which specifies the url of the soundcloud song
+         * Accepts a function callback which will receive a scApiData and error object.
+         */
         getSCId: function(url, cb) {
             app.getJSON('https://api.soundcloud.com/resolve.json?url='+ encodeURIComponent(url) +'&client_id=' + scApiId, cb);
         },
+
+        /*
+         * Returns the ID of a youtube video or false if none found
+         *
+         * Accepts a string url of YT video
+         */
         getYTId: function(url) {
             var regExp = /.*(?:youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/;
             var match = url.match(regExp);
@@ -322,10 +421,18 @@ function App() {
                 return false;
             };
         },
+
+        /*
+         * Toggles whether the external player is shown
+         */
         togglePlayerShow: function() {
             var playerDiv = $("#playerWrap");
             app.toggleClass(playerDiv, 'showPlayer');
         },
+
+        /*
+         * Toggles whether the information text is shown
+         */
         toggleInfoShow: function() {
             var aboutDiv = $("#about");
             if (app.getStyle(aboutDiv,"display")==="none") {
@@ -335,6 +442,12 @@ function App() {
                 aboutDiv.style.display = "none";
             }
         },
+
+        /*
+         * Returns which index the current song has in a playlist or 0 if none found
+         *
+         * Accepts an array playlist
+         */
         indexInPlaylist: function(playlist) {
             for(var i = 0; i < playlist.length; i++) {
                 if (playlist[i].episode===player.episode()) {
@@ -343,6 +456,10 @@ function App() {
             }
             return 0;
         },
+
+        /*
+         * Toggles shuffle
+         */
         toggleShuffle: function() {
             var shuffleButton = $("#toggleShuffle");
             if (player.isShuffling) {
@@ -357,6 +474,10 @@ function App() {
                 app.addClass(shuffleButton,"glow");
             }
         },
+
+        /*
+         * Toggles muting
+         */
         toggleVolume: function() {
             var volumeButton = $("#toggleVolume");
             if (player.YTPlayer.isMuted()) {
@@ -375,12 +496,29 @@ function App() {
             }
             player.isMuted = !player.isMuted;
         },
+
+        /*
+         * Sets the volume
+         *
+         * Accepts an object event which has a key offsetX with value 0 < int < 50
+         */
         setVolume: function(event) {
             player.volume = Math.ceil(event.offsetX/50 * 100);
             $("#volume").style.width = player.volume+"%";
             player.YTPlayer.setVolume(player.volume);
-            player.SCPlayer.setVolume(player.volume/100);
+
+            if (player.isMuted) {
+                app.removeClass(volumeButton,"iconicstroke-volume-mute");
+                app.addClass(volumeButton,"iconicstroke-volume");
+            } else {
+                player.SCPlayer.setVolume(player.volume/100);
+            }
         },
+
+        /*
+         * Creates a shuffled playlist under player.shuffledPlaylist, sets it as the current playlist
+         * Find the current song and sets the current playing index accordingly
+         */
         shuffle: function() {
             player.shuffledPlaylist = JSON.parse(JSON.stringify(player.originalPlaylist));
             var counter = player.playlist().length - 1;
@@ -409,6 +547,9 @@ function App() {
 
     var player = app.player;
 
+    /*
+     * Polls the server for a new version of the playlsit
+     */
     app.updatePlaylist = function(cb) {
         app.getJSON('playlist', function(data, errors) {
             if (!errors) {
@@ -422,10 +563,19 @@ function App() {
         });
     };
 
+    /*
+     * Hides error notice
+     */
     app.hideError = function() {
         $("#error").style.display = "none";
     };
 
+    /*
+     * Shows error notice
+     *
+     * Accepts str message
+     * Accepts str lifeTime or bool=false for forever
+     */
     app.showError = function(message, time) {
         $("#error").style.display = "block";
         if (typeof message === "string") {
@@ -441,6 +591,11 @@ function App() {
         }
     };
 
+    /*
+     * Shows success notice
+     *
+     * Accepts str message
+     */
     app.showSuccess = function(message) {
         $("#success").style.display = "block";
         if (typeof message === "string") {
@@ -451,6 +606,9 @@ function App() {
         }, 3000);
     };
 
+    /*
+     * Toggles fullscreen mode
+     */
     app.toggleFullscreen = function() {
         var fullscreenbutton = $("#toggleFullscreen").children[0];
         if (!document.fullscreenElement &&    // alternative standard method
@@ -480,6 +638,9 @@ function App() {
 
     };
 
+    /*
+     * Adds a html5 history entry
+     */
     app.addHistory = function() {
         history.replaceState({index:player.index}, "Episode "+player.episode() +" of latenight.blue", ""+player.episode());
         $("#pagetitle").innerHTML = "Episode "+player.episode() +" of latenight.blue";
@@ -490,6 +651,9 @@ function App() {
         });
     };
 
+    /*
+     * Handles the popstate event redirecting to the appropriate song
+     */
     app.handlePopState = function(event) {
         var episode = parseInt(window.location.pathname.substr(1));
 
@@ -508,6 +672,9 @@ function App() {
         }
     };
 
+    /*
+     * Handles keydown events
+     */
     app.onKeyDown = function(event) {
         if (event.keyCode === 32) { // spacebar
             player.togglePlay();
@@ -532,47 +699,51 @@ function App() {
         }
     };
 
+    /*
+     * Initializes the app
+     */
     app.init = function() {
 
-    if ($("#error").innerHTML !== "") {
-        app.showError();
-    }
-    // Load playlist
-    app.updatePlaylist(function() {
+        // Show server side errors
+        if ($("#error").innerHTML !== "") {
+            app.showError();
+        }
+        // Load playlist
+        app.updatePlaylist(function() {
 
-        app.handlePopState();
+            app.handlePopState();
 
-        window.onpopstate = app.handlePopState;
+            window.onpopstate = app.handlePopState;
 
-        // Create and init player
-        app.player.init();
+            // Create and init player
+            app.player.init();
 
-        //Bind events
-        document.addEventListener("keydown", app.onKeyDown, false);
+            //Bind events
+            document.addEventListener("keydown", app.onKeyDown, false);
 
-        var buttons = $("a");
-        for(var i = 0; i < buttons.length; i++) {
-            buttons[i].onclick = function(event) {
-                if (event.target.hasAttribute("data-action")) {
-                    var funcName = event.target.getAttribute("data-action");
-                }
-                else if (event.target.parentNode.hasAttribute("data-action")) {
-                    var funcName = event.target.parentNode.getAttribute("data-action");
-                }
-                else {
-                    var funcName = event.path[1].getAttribute("data-action");
-                }
+            var buttons = $("a");
+            for(var i = 0; i < buttons.length; i++) {
+                buttons[i].onclick = function(event) {
+                    if (event.target.hasAttribute("data-action")) {
+                        var funcName = event.target.getAttribute("data-action");
+                    }
+                    else if (event.target.parentNode.hasAttribute("data-action")) {
+                        var funcName = event.target.parentNode.getAttribute("data-action");
+                    }
+                    else {
+                        var funcName = event.path[1].getAttribute("data-action");
+                    }
 
-                if (typeof player[funcName] === "function") {
-                    player[funcName](event);
-                }
-                else if (typeof app[funcName] === "function") {
-                    app[funcName](event);
+                    if (typeof player[funcName] === "function") {
+                        player[funcName](event);
+                    }
+                    else if (typeof app[funcName] === "function") {
+                        app[funcName](event);
+                    }
                 }
             }
-        }
-    });
-};
+        });
+    };
 
 app.addClass = function(el, className) {
     if (!el) {return;}
