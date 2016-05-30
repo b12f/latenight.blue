@@ -17,6 +17,7 @@
 * {
     margin: 0px;
     padding: 0px;
+    box-sizing: border-box;
 }
 html {
   height:100%;
@@ -25,15 +26,7 @@ html {
 body {
     background-color: #282c34;
     color: white;
-    display: -ms-flexbox;      /* TWEENER - IE 10 */
-    display: -webkit-flex;     /* NEW - Chrome */
-    display: flex;             /* NEW, Spec - Opera 12.1, Firefox 20+ */
-    -webkit-justify-content: space-around; /* Safari 6.1+ */
-    -ms-justify-content: center;
-    justify-content: center;
-    -webkit-align-items: center;
-    -ms-align-items: center;
-    align-items: center;
+    margin: 0 auto;
     font-size: 16px;
     font-family: "Oswald", sans-serif;
     overflow: auto;
@@ -44,10 +37,9 @@ body {
     -webkit-transition: background-color 0.2s ease-out, color 0.2s ease-out;
 }
 #main {
-    margin: 15vh 20px auto 20px;
-    width: 40vw;
-    min-width: 600px;
-    max-width: 90vw;
+    margin: 15vh auto;
+    width: 80%;
+    max-width: 600px;
     height: auto;
     min-height: 50vh;
     font-weight: normal;
@@ -259,7 +251,7 @@ p {
 #playlist > div {
     width: 100%;
     overflow: hidden;
-    height: 25px;
+    min-height: 25px;
 }
 
 #playlist > div.current {
@@ -270,21 +262,21 @@ p {
     min-width: 30px;
 }
 
-@media screen and (max-width: 1000px) {
-  #main {
-      width: 70vw;
-      min-width: inherit;
-  }
+@media screen and (max-device-width: 550px) {
+    #playlist .song {
+        display: block;
+        width: 100%;
+    }
 }
+
 @media screen and (max-device-width: 768px) {
   #mobilewarning {
     display: inline-block;
   }
-  #main {
-      width: 90vw;
-      margin: 25px 10px 25px 10px;
-      border: 8px solid white;
-  }
+    #main {
+        width: 95%;
+        margin: 10% auto;
+    }
 }
 
 body.ep100 {
