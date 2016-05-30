@@ -1,4 +1,12 @@
 @import url(http://weloveiconfonts.com/api/?family=iconicstroke);
+@import url(http://weloveiconfonts.com/api/?family=iconicfill);
+
+/* iconicfill */
+[class*="iconicfill-"]:before {
+    font-family: 'IconicFill', sans-serif;
+    margin-left: 5px;
+    margin-right: 5px;
+}
 
 /* iconicstroke */
 [class*="iconicstroke-"]:before {
@@ -148,8 +156,13 @@ input:hover, button:hover {
 input:active, button:active {
     border-color: rgba(255,255,255,1);
 }
-p {
+select,
+select option {
+    background: #282c34;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
 
+p {
     margin-top: 10px;
     font-size: 14px;
     font-weight: lighter;
@@ -232,6 +245,29 @@ p {
   height: 4px;
   display: block;
   float: left;
+}
+
+#playlistWrap {
+    display: none;
+    font-weight: lighter;
+}
+
+#playlist {
+    padding-top: 20px;
+}
+
+#playlist > div {
+    width: 100%;
+    overflow: hidden;
+    height: 25px;
+}
+
+#playlist > div.current {
+    font-weight: normal;
+}
+#playlist > div > * {
+    display: inline-block;
+    min-width: 30px;
 }
 
 @media screen and (max-width: 1000px) {

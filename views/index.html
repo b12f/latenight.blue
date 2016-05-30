@@ -68,39 +68,48 @@
                 <span id="artist"><%= episode.artist %></span> <span>-</span> <span id="album"><%= episode.album %></span>
                 </a><br /><br />
                 <div id="playerWrap">
-                    <a title="Previous" href="javascript:void(0)" id="previous" data-action="previous"><span class="iconicstroke-first nomargin"></span></a>
-                    <a title="Play / Pause" href="javascript:void(0)" id="playpause" data-action="togglePlay"><span class="iconicstroke-play" id="playpausebutton"></span></a>
-                    <a title="Next" href="javascript:void(0)" id="next" data-action="next"><span class="iconicstroke-last"></span></a>
+                    <a title="Previous [Left Arrow]" href="javascript:void(0)" id="previous" data-action="previous"><span class="iconicstroke-first nomargin"></span></a>
+                    <a title="Play / Pause [Spacebar]" href="javascript:void(0)" id="playpause" data-action="togglePlay"><span class="iconicstroke-play" id="playpausebutton"></span></a>
+                    <a title="Next [Right Arrow]" href="javascript:void(0)" id="next" data-action="next"><span class="iconicstroke-last"></span></a>
                     <span class="spacer"></span>
                     <span class="one small"><span id="timeIndex">00:00</span> <span>/</span> <span id="length">00:00</span></span>
 
                     <span class="spacer"></span>
                     <span id="volumeWrap">
-                      <a title="Volume" href="javascript:void(0)" id="toggleVolumeWrap" data-action="toggleVolume">
+                      <a title="Volume Mute [M]" href="javascript:void(0)" id="toggleVolumeWrap" data-action="toggleVolume">
                         <span class="iconicstroke-volume" id="toggleVolume"></span>
                       </a>
                       <a id="volumeBar" href="javascript:void(0)" data-action="setVolume">
                         <div id="volume" style="width: 100%;"></div>
                       </a>
                     </span>
-                    <a title="Shuffle" href="javascript:void(0)" id="toggleShuffle" data-action="toggleShuffle"><span class="iconicstroke-fork"></span></a>
-                    <a title="Fullscreen" href="javascript:void(0)" id="toggleFullscreen" data-action="toggleFullscreen"><span class="iconicstroke-fullscreen"></span></a>
-                    <a title="Show Youtube player" href="javascript:void(0)" id="togglePlayerShow" data-action="togglePlayerShow"><span class="iconicstroke-eye"></span></a>
-                    <a title="Show information" target="_blank" href="javascript:void(0)" id="toggleInfoShow" data-action="toggleInfoShow" ><span class="iconicstroke-info"></span></a>
+                    <a title="Like [H]" href="javascript:void(0)" data-action="toggleLike"><span id="toggleLike" class="iconicstroke-heart-stroke"></span></a>
+                    <a title="Show Playlists [P]" href="javascript:void(0)" id="togglePlaylistShow" data-action="togglePlaylistShow"><span class="iconicstroke-list"></span></a>
+                    <a title="Shuffle [S]" href="javascript:void(0)" id="toggleShuffle" data-action="toggleShuffle"><span class="iconicstroke-fork"></span></a>
+                    <a title="Show Player [V]" href="javascript:void(0)" id="togglePlayerShow" data-action="togglePlayerShow"><span class="iconicstroke-eye"></span></a>
+                    <a title="Show information [I]" target="_blank" href="javascript:void(0)" id="toggleInfoShow" data-action="toggleInfoShow" ><span class="iconicstroke-info"></span></a>
                     <br /><br />
                     <p id="mobilewarning">Mobile devices might have trouble auto-starting media. Click the eye icon and start by hand if this is the case for you.</p>
-                    <div id="about" class="hidden">
-                        <p>
-                            This is a carefully curated collection of minimalist music. It aims to provide no fluff, no unnecessary extras.
-                        </p>
-                        <p>
-                            If you enjoy this music, please consider using adblock and supporting the artists directly by buying their tracks or seeing them live.
-                        </p>
-                        <p>
-                            <a title="Go to Facebook page" target="_blank" href="https://www.facebook.com/latenight.blue" >fb</a> -
-                            <a title="Go to Github page" target="_blank" href="https://github.com/b12f/latenight.blue" >Github</a> -
-                            <a title="Go to subreddit" target="_blank" href="https://www.reddit.com/r/latenightblue" >Reddit</a>
-                        </p>
+                    <div id="extras">
+                        <div id="extPlayerWrap"></div>
+                        <div id="about" class="hidden">
+                            <p>
+                                This is a carefully curated collection of minimalist music. It aims to provide no fluff, no unnecessary extras.
+                            </p>
+                            <p>
+                                If you enjoy this music, please consider using adblock and supporting the artists directly by buying their tracks or seeing them live.
+                            </p>
+                            <p>
+                                <a title="Go to Facebook page" target="_blank" href="https://www.facebook.com/latenight.blue" >fb</a> -
+                                <a title="Go to Github page" target="_blank" href="https://github.com/b12f/latenight.blue" >Github</a> -
+                                <a title="Go to subreddit" target="_blank" href="https://www.reddit.com/r/latenightblue" >Reddit</a>
+                            </p>
+                        </div>
+                        <div id="playlistWrap">
+                            <h4>Playlist</h4>
+                            <a title="Play liked tracks [L]" href="javascript:void(0)" data-action="toggleLikedOnly"><span id="toggleLikedOnly" class="iconicstroke-heart-stroke"></span> Liked only</a>
+                            <div id="playlist"></div>
+                        </div>
                     </div>
                 </div>
             </div>

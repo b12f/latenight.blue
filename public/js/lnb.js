@@ -10,19 +10,15 @@ function App() {
         index: 0,
         volume: 100,
         muted: false,
+        likedList: [],
         originalPlaylist: undefined,
-        shuffledPlaylist: undefined,
+        currentPlaylist: undefined,
 
         /*
          * Returns the currently used playlist
          */
         playlist: function() {
-            if (player.isShuffling) {
-                return player.shuffledPlaylist;
-            }
-            else {
-                return player.originalPlaylist;
-            }
+            return player.currentPlaylist;
         },
         SCPlayer: undefined,
         YTPlayer: undefined,
@@ -30,6 +26,7 @@ function App() {
         updateCallback: undefined,
         skipTimeout: undefined,
         isShuffling: false,
+        playingLikes: false,
 
         /*
          * Returns the episode number of the current episode
@@ -127,6 +124,15 @@ function App() {
         init: function() {
             $('body')[0].setAttribute('class', 'ep'+player.episode());
 
+            try {
+                var lp = localStorage.getItem('likedList');
+                if (lp) {
+                    this.likedList = JSON.parse(lp);
+                }
+            } catch(e) {
+                this.likedList = [];
+            }
+
             switch (player.getHost(player.currentSong().url)) {
                 case 'youtube':
                     var YTvideoId = player.getYTId(player.currentSong().url);
@@ -155,10 +161,17 @@ function App() {
                 $('#episode').innerHTML = song.episode;
                 $('#artist').innerHTML = song.artist;
                 $('#album').innerHTML = song.album;
+                player.drawPlaylistCurrentItem();
                 player.vidLength(function (duration) {
                     $('#length').innerHTML = duration;
                 });
                 $('#url').setAttribute("href", song.url);
+
+                if (player.isLiked(song.episode)) {
+                    $("#toggleLike").setAttribute("class", "iconicfill-heart-fill");
+                } else {
+                    $("#toggleLike").setAttribute("class", "iconicstroke-heart-stroke");
+                }
 
                 if (player.getHost(song.url) === 'youtube' && player.YTPlayer.getPlayerState() === 0) {
                     player.next();
@@ -180,7 +193,7 @@ function App() {
                 var YTplayerDiv = document.createElement('div');
                 YTplayerDiv.id = 'YTplayer';
                 YTplayerDiv.className = 'player';
-                $('#playerWrap').appendChild(YTplayerDiv);
+                $('#extPlayerWrap').appendChild(YTplayerDiv);
 
                 // init player
                 app.player.YTPlayer = new YT.Player('YTplayer', {
@@ -214,7 +227,7 @@ function App() {
                     }
 
                     SCplayerDiv.setAttribute('src', 'https://w.soundcloud.com/player/?url='+ encodeURIComponent(scApiData.uri) +'&amp;auto_play=false&amp;hide_related=true&amp;show_comments=true&amp;show_user=false&amp;show_reposts=false&amp;visual=true')
-                    $('#playerWrap').appendChild(SCplayerDiv);
+                    $('#extPlayerWrap').appendChild(SCplayerDiv);
 
                     app.player.SCPlayer = SC.Widget('SCplayer');
                     app.player.SCPlayer.setVolume(player.volume);
@@ -283,49 +296,51 @@ function App() {
         startPlayBack: function(addHistory) {
             clearTimeout(player.skipTimeout);
 
-            if (player.currentSong().deleted===true) {
-                app.showError("Episode not found. Skipping.");
-                player.next();
-            }
-            else {
-                app.removeClass($('.currentPlayer')[0], 'currentPlayer');
-                player.pause();
+            app.removeClass($('.currentPlayer')[0], 'currentPlayer');
+            player.pause();
 
-                switch (player.getHost(player.currentSong().url)) {
-                    case 'youtube':
-                        player.YTPlayer.loadVideoById(player.getYTId(player.currentSong().url));
-                        player.play();
-                        break;
-                    case 'soundcloud':
-                        player.getSCId(player.currentSong().url, function (scApiData, error) {
-                            if (error) {
-                                app.showError("An error occurred contacting the Soundcloud API.");
-                                console.log(error);
-                                player.next();
-                                return;
-                            }
-                            player.SCPlayer.load(scApiData.uri);
-                            player.SCPlayer.bind(SC.Widget.Events.READY, function onSCPlayerReady () {
-                                player.SCPlayer.setVolume(player.volume/100);
-                                if (player.isMuted) {player.SCPlayer.setVolume(0);}
-                                player.play();
-                            });
+            if (player.playingLikes && !player.isLiked(player.episode())) {
+                player.next();
+                return;
+            }
+
+            switch (player.getHost(player.currentSong().url)) {
+                case 'youtube':
+                    player.YTPlayer.loadVideoById(player.getYTId(player.currentSong().url));
+                    player.play();
+                    break;
+                case 'soundcloud':
+                    player.getSCId(player.currentSong().url, function (scApiData, error) {
+                        if (error) {
+                            app.showError("An error occurred contacting the Soundcloud API.");
+                            console.log(error);
+                            player.next();
+                            return;
+                        }
+                        player.SCPlayer.load(scApiData.uri);
+                        player.SCPlayer.bind(SC.Widget.Events.READY, function onSCPlayerReady () {
+                            player.SCPlayer.setVolume(player.volume/100);
+                            if (player.isMuted) {player.SCPlayer.setVolume(0);}
+                            player.play();
                         });
-                        break;
-                    default:
-                        app.showError('An error occurred. Skipping.');
-                        player.next();
-                        break;
+                    });
+                    break;
+                default:
+                    app.showError('An error occurred. Skipping.');
+                    player.next();
+                    return;
+                    break;
+            }
+
+            $('body')[0].setAttribute('class', 'ep'+player.episode());
+            player.updateCallback = setInterval(function() {
+                    player.updateTime();
                 }
-                $('body')[0].setAttribute('class', 'ep'+player.episode());
-                player.updateCallback = setInterval(function() {
-                        player.updateTime();
-                    }
-                    , 1000);
-                $("#playpausebutton").setAttribute("class", "iconicstroke-pause");
-                if (addHistory) {
-                    app.addHistory();
-                }
+                , 1000);
+
+            $("#playpausebutton").setAttribute("class", "iconicstroke-pause");
+            if (addHistory) {
+                app.addHistory();
             }
         },
 
@@ -368,7 +383,7 @@ function App() {
          */
         goTo: function(index, addHistory) {
             // Go to song
-            if (typeof index === "number" && 0 <= index < player.playlist().length ) {
+            if (typeof index === "number" && 0 <= index && index < player.playlist().length ) {
                 player.index = index;
                 player.startPlayBack(addHistory);
             }
@@ -426,7 +441,7 @@ function App() {
          * Toggles whether the external player is shown
          */
         togglePlayerShow: function() {
-            var playerDiv = $("#playerWrap");
+            var playerDiv = $("#extPlayerWrap");
             app.toggleClass(playerDiv, 'showPlayer');
         },
 
@@ -444,17 +459,183 @@ function App() {
         },
 
         /*
-         * Returns which index the current song has in a playlist or 0 if none found
+         * Toggles like status of [current] song
          *
-         * Accepts an array playlist
+         * Accepts optional number episode
          */
-        indexInPlaylist: function(playlist) {
+        toggleLike: function(ep) {
+            if (!ep || typeof(ep) !== "number") {
+                ep = player.currentSong().episode;
+            }
+
+            var likeIcon = $("#toggleLike");
+
+            if (player.isLiked(ep)) {
+                likeIcon.setAttribute('class', 'iconicstroke-heart-stroke');
+                player.likedList.splice(player.likedList.indexOf(ep), 1);
+            }
+            else {
+                likeIcon.setAttribute('class', 'iconicfill-heart-fill');
+                player.likedList.push(ep);
+            }
+
+            localStorage.setItem('likedList', JSON.stringify(player.likedList));
+
+            player.drawPlaylist();
+        },
+
+        /*
+         * Toggles whether liked or all songs are playing
+         */
+        toggleLikedOnly: function() {
+            player.playingLikes = !player.playingLikes;
+            player.drawPlaylist();
+            var indicator = $('#toggleLikedOnly');
+            if (player.playingLikes) {
+                indicator.setAttribute('class', 'iconicfill-heart-fill');
+            } else {
+                indicator.setAttribute('class', 'iconicstroke-heart-stroke');
+            }
+        },
+
+        /*
+         * Checks whether a song is liked
+         *
+         * Accepts optional number episode
+         *
+         * returns boolean isLiked
+         */
+        isLiked: function(ep) {
+            return player.likedList.indexOf(ep) > -1;
+        },
+
+        /*
+         * Returns which index the current song has in a playlist or -1 if none found
+         *
+         * Accepts an array playlist and optional number episode
+         *
+         * returns number index
+         */
+        indexInPlaylist: function(playlist, episode) {
+            if (!episode) {
+                episode = player.episode();
+            }
+
             for(var i = 0; i < playlist.length; i++) {
-                if (playlist[i].episode===player.episode()) {
+                if (playlist[i].episode === episode) {
                     return i;
                 }
             }
-            return 0;
+            return -1;
+        },
+
+        /*
+         * Toggles display of playlist
+         */
+        togglePlaylistShow: function() {
+            var playlistWrap = $("#playlistWrap");
+            if (app.getStyle(playlistWrap,"display")==="none") {
+                playlistWrap.style.display = "block";
+            }
+            else {
+                playlistWrap.style.display = "none";
+            }
+        },
+
+        /*
+         * Sets the current playlist
+         *
+         * Accepts array playlist
+         */
+        setCurrentPlaylist: function(data) {
+            player.currentPlaylist = JSON.parse(JSON.stringify(data));
+            player.drawPlaylist();
+        },
+
+        /*
+         * Draws the html of the playlist view
+         */
+        drawPlaylist: function() {
+            setTimeout(function() {
+
+                var playlistDiv = $('#playlist');
+
+                playlistDiv.innerHTML = '';
+
+                for (var i = 0; i < player.playlist().length; i++) {
+                    var song = player.playlist()[i];
+
+                    if (player.playingLikes && !player.isLiked(song.episode)) {
+                        continue;
+                    }
+
+                    var html = '<div ' +
+                        'id="ep' + song.episode + '" ' +
+                        'class="entry">' +
+                        '<div class="episode">' +
+                        song.episode +
+                        '</div>' +
+                        '<a ' +
+                        'class="like"'+
+                        'href="javascript:void(0)" ' +
+                        'data-episode="' + song.episode + '">' +
+                        '<span class="';
+                    if (player.isLiked(song.episode)) {
+                        html += 'iconicfill-heart-fill'
+                    } else {
+                        html += 'iconicstroke-heart-stroke';
+                    }
+                    html += '"></span></a>&nbsp;&nbsp;' +
+                        '<a ' +
+                        'class="song"'+
+                        'href="javascript:void(0)" ' +
+                        'data-episode="' + song.episode + '">' +
+                        song.artist +
+                        ' - ' +
+                        song.title +
+                        '</a>' +
+                        '</div>';
+                    playlistDiv.innerHTML = playlistDiv.innerHTML + html;
+                }
+
+                var buttons = $("a.song");
+                for(var i = 0; i < buttons.length; i++) {
+                    buttons[i].addEventListener('click', function(event) {
+                        if (event.target.hasAttribute("data-episode")) {
+                            var episode = parseInt(event.target.getAttribute("data-episode"));
+                        }
+
+                        player.goTo(player.indexInPlaylist(player.playlist(), episode));
+                    });
+                }
+
+                buttons = $("a.like");
+                for(i = 0; i < buttons.length; i++) {
+                    buttons[i].addEventListener('click', function(event) {
+                        if (event.target.hasAttribute("data-episode")) {
+                            var episode = parseInt(event.target.getAttribute("data-episode"));
+                        } else {
+                            var episode = parseInt(event.target.parentElement.getAttribute("data-episode"));
+                        }
+
+
+                        player.toggleLike(episode);
+                    });
+                }
+
+                player.drawPlaylistCurrentItem();
+            }, 0);
+        },
+
+        /*
+         * Bolds the current song in the playlist view
+         */
+        drawPlaylistCurrentItem: function () {
+            var curEls = $('.entry.current');
+            for (var i = 0; i < curEls.length; i++) {
+                app.removeClass(curEls[i], 'current');
+            }
+            app.addClass($('#ep' + player.episode()), 'current');
         },
 
         /*
@@ -464,11 +645,12 @@ function App() {
             var shuffleButton = $("#toggleShuffle");
             if (player.isShuffling) {
                 player.index = player.indexInPlaylist(player.originalPlaylist);
+                player.setCurrentPlaylist(player.originalPlaylist);
                 app.removeClass(shuffleButton,"glow");
                 player.isShuffling = false;
             }
             else {
-                player.shuffle();
+                player.setCurrentPlaylist(player.getShuffledPlaylist());
                 player.index = 0;
                 player.isShuffling = true;
                 app.addClass(shuffleButton,"glow");
@@ -519,8 +701,8 @@ function App() {
          * Creates a shuffled playlist under player.shuffledPlaylist, sets it as the current playlist
          * Find the current song and sets the current playing index accordingly
          */
-        shuffle: function() {
-            player.shuffledPlaylist = JSON.parse(JSON.stringify(player.originalPlaylist));
+        getShuffledPlaylist: function() {
+            var shuffledPlaylist = JSON.parse(JSON.stringify(player.playlist()));
             var counter = player.playlist().length - 1;
             var temp;
             var index;
@@ -534,14 +716,16 @@ function App() {
                 counter--;
 
                 // And swap the last element with it
-                temp = player.shuffledPlaylist[counter];
-                player.shuffledPlaylist[counter] = player.shuffledPlaylist[index];
-                player.shuffledPlaylist[index] = temp;
+                temp = shuffledPlaylist[counter];
+                shuffledPlaylist[counter] = shuffledPlaylist[index];
+                shuffledPlaylist[index] = temp;
             }
 
-            var indexOfCurrentSong = player.indexInPlaylist(player.shuffledPlaylist);
-            var songToAdd = player.shuffledPlaylist.splice(indexOfCurrentSong, 1);
-            player.shuffledPlaylist.unshift(songToAdd[0]);
+            var indexOfCurrentSong = player.indexInPlaylist(shuffledPlaylist);
+            var songToAdd = shuffledPlaylist.splice(indexOfCurrentSong, 1);
+            shuffledPlaylist.unshift(songToAdd[0]);
+
+            return shuffledPlaylist;
         }
     };
 
@@ -610,7 +794,6 @@ function App() {
      * Toggles fullscreen mode
      */
     app.toggleFullscreen = function() {
-        var fullscreenbutton = $("#toggleFullscreen").children[0];
         if (!document.fullscreenElement &&    // alternative standard method
             !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement ) {  // current working methods
             if (document.documentElement.requestFullscreen) {
@@ -622,7 +805,6 @@ function App() {
             } else if (document.documentElement.webkitRequestFullscreen) {
                 document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
             }
-            fullscreenbutton.className = "iconicstroke-fullscreen-exit";
         } else {
             if (document.exitFullscreen) {
                 document.exitFullscreen();
@@ -633,7 +815,6 @@ function App() {
             } else if (document.webkitExitFullscreen) {
                 document.webkitExitFullscreen();
             }
-            fullscreenbutton.className = "iconicstroke-fullscreen";
         }
 
     };
@@ -658,7 +839,7 @@ function App() {
         var episode = parseInt(window.location.pathname.substr(1));
 
         player.index = 0;
-        if (!isNaN(episode) && typeof episode === "number" && 0 <= episode < player.playlist().length ) {
+        if (!isNaN(episode) && typeof episode === "number" ) {
             for (var i = 0; i < player.playlist().length; i++) {
                 if (player.playlist()[i].episode === episode) {
                     player.index = i;
@@ -691,8 +872,20 @@ function App() {
         else if (event.keyCode === 77) { // m
             player.toggleVolume();
         }
+        else if (event.keyCode === 72) { // h
+            player.toggleLike();
+        }
         else if (event.keyCode === 73) { // i
             player.toggleInfoShow();
+        }
+        else if (event.keyCode === 76) { // l
+            player.toggleLikedOnly();
+        }
+        else if (event.keyCode === 80) { // p
+            player.togglePlaylistShow();
+        }
+        else if (event.keyCode === 83) { // s
+            player.toggleShuffle();
         }
         else if (event.keyCode === 86) { // v
             player.togglePlayerShow();
@@ -709,7 +902,8 @@ function App() {
             app.showError();
         }
         // Load playlist
-        app.updatePlaylist(function() {
+        app.updatePlaylist(function () {
+            player.setCurrentPlaylist(player.originalPlaylist);
 
             app.handlePopState();
 
@@ -723,7 +917,7 @@ function App() {
 
             var buttons = $("a");
             for(var i = 0; i < buttons.length; i++) {
-                buttons[i].onclick = function(event) {
+                buttons[i].addEventListener('click', function(event) {
                     if (event.target.hasAttribute("data-action")) {
                         var funcName = event.target.getAttribute("data-action");
                     }
@@ -740,7 +934,7 @@ function App() {
                     else if (typeof app[funcName] === "function") {
                         app[funcName](event);
                     }
-                }
+                });
             }
         });
     };
