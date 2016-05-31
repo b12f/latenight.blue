@@ -35,7 +35,7 @@ body {
     -webkit-transition: background-color 0.2s ease-out, color 0.2s ease-out;
 }
 #main {
-    margin: 15vh auto;
+    margin: 20vh auto;
     width: 80%;
     max-width: 600px;
     height: auto;
