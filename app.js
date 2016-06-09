@@ -1,60 +1,49 @@
-var express = require('express');
-var fs = require('fs');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var consolidate = require('consolidate');
-var forceDomain = require('express-force-domain');
-var compression = require('compression');
-var vars = require('./bin/vars');
+'use strict';
 
-var methods = require('./bin/methods');
-var routes = require('./routes/index');
+/* Note: using staging server url, remove .testing() for production
+Using .testing() will overwrite the debug flag with true */
+var LEX = require('letsencrypt-express').testing();
 
-var app = express();
-
-
-// view engine setup
-app.engine('html', consolidate.underscore);
-app.set('view engine', 'html');
-app.set('views', path.join(__dirname, 'views'));
-
-// uncomment after placing your favicon in /public
-app.use(favicon(__dirname + '/public/img/LNB.png'));
-app.use(compression());
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.use(forceDomain(vars.homeurl.slice(0, -1)));
-
-app.use('/', routes);
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+var lex = LEX.create({
+  configDir: require('os').homedir() + '/letsencrypt/etc'
+, approveRegistration: function (settings.baseUrl, cb) { // leave `null` to disable automatic registration
+    // Note: this is the place to check your database to get the user associated with this domain
+    cb(null, {
+      domains: [settings.baseUrl]
+    , email: settings.leEmail // user@example.com
+    , agreeTos: true
+    });
+  }
 });
 
-// error handlers
+var http = require('http');
+var https = require('spdy');
+var koa = require('koa');
+var app = koa();
+var settings = require('bin/settings.js');
+app.use(reguire('koa-render')(settings.viewDir, { // templating
+  html: 'underscore'
+}));
+var redirectHttps = koa().use(require('koa-force-ssl').callback();
+app.use(require('koa-static')(settings.publicDir, {
+    maxage: (30*24*60*60*1000),
+    defer: true
+}));
+app.use(require('express-force-domain')(settings.baseUrl.slice(0, -1)));
+app.use(require('serve-favicon')(settings.faviconFile));
 
-// production error handler
-// no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  console.log(err);
-  res.render('error', {
-    vars: vars,
-    title: vars.title,
-    message: err.message,
-    error: err
-  });
+var router = require('./bin/routes.js');
+app
+  .use(router.routes())
+  .use(router.allowedMethods());
+
+var server = https.createServer(lex.httpsOptions, LEX.createAcmeResponder(lex, app.callback()));
+var redirectServer = http.createServer(LEX.createAcmeResponder(lex, redirectHttps)));
+
+server.listen(443, function () {
+ console.log('Listening at :' +  + this.address().port);
 });
 
-
-module.exports = app;
+redirectServer.listen(80, function () {
+  console.log('Redirecting insecure traffic from http://localhost:' + this.address().port + ' to https');
+});

@@ -1,39 +1,36 @@
 var fs = require('fs');
 var path = require('path');
-var vars = require('./vars');
+var settings = require('./settings');
 var playlist = [];
 var methods = {
-    getQueue: function(cb){
-      this.scrapeFullJSON(vars.queueDir, cb);
+    getQueue: function *(){
+        return yield this.scrapeFullJSON(settings.queueDir);
     },
-    getPlaylist: function(cb){
-      this.scrapeFullJSON(vars.playlistDir, cb);
+    getPlaylist: function *(cb){
+        return yield this.scrapeFullJSON(settings.playlistDir);
     },
-    scrapeFullJSON: function(dir, cb){
+    scrapeFullJSON: function *(dir, cb){
         playlist = [];
-          fs.readdir(dir, function(err, files){
-              if(err){
-                  console.log(err);
-                  cb(false);
-              }
-              else{
-                  var c = 0;
-                  if(files.length===0){
-                    cb([]);
-                  }
-                  for(var i=0; i<files.length;i++){
-                      var file = files[i];
-                      fs.readFile(dir+'/'+file, 'utf-8', function(err, song){
-                          c++;
-                          song = JSON.parse(song);
-                          playlist.push(song);
-                          if(c===files.length){
-                              cb(methods.sortArrayByKey(playlist, "episode", true));
-                          }
-                      });
-                  }
-              }
-          });
+        try {
+            let files = yield fs.readdir(dir);
+        } catch(err) {
+            console.log(err);
+            cb(false);
+        }
+        let c = 0;
+        if(files.length===0){
+          return [];
+        }
+        for(var i=0; i<files.length;i++){
+            let file = files[i];
+            let song = yield fs.readFile(dir+'/'+file, 'utf-8');
+            c++;
+            song = JSON.parse(song);
+            playlist.push(song);
+            if(c===files.length){
+                return methods.sortArrayByKey(playlist, "episode", true);
+            }
+        }
     },
     sortArrayByKey: function(array, key, reverse){
       return array.sort(function(a, b) {
@@ -46,7 +43,7 @@ var methods = {
           }
       });
     },
-    songExists: function(song, cb){
+    songExists: function *(song, cb){
       var methods = this;
       //Check queue
         methods.getQueue(function(queue){
@@ -76,59 +73,58 @@ var methods = {
     },
     findSuitableFile: function(c, dir, cb){
         var methods = this;
-        fs.exists(dir +'/'+ c + '.json', function(exists){
-            if(exists){
-                c++;
-                methods.findSuitableFile(c, dir, cb);
-            }
-            else {
-                cb(dir +'/'+ c + '.json', c);
-            }
-        });
+        let exists = yield fs.exists(dir +'/'+ c + '.json');
+        if(exists){
+            c++;
+            methods.findSuitableFile(c, dir, cb);
+        }
+        else {
+            cb(dir +'/'+ c + '.json', c);
+        }
     },
     save: function(song, cb){
         var methods = this;
-        methods.songExists(song, function(exists){
-            if(exists){
-                cb("Song already seems to exist on url " + exists + ".", song);
+        let exists = yield methods.songExists(song);
+
+        if(exists){
+            cb("Song already seems to exist on url " + exists + ".", song);
+        }
+        else{
+            let files = fs.readdir(settings.queueDir);
+            if(err){
+                cb(err, song);
             }
             else{
-                fs.readdir(vars.queueDir, function(err, files){
-                    if(err){
+            files.sort(function(a, b){
+                return a < b ? -1 : 1;
+            });
+            if(files.length === 0){
+              var c = 0;
+            }
+            else {
+              var c = parseInt(files[files.length - 1].substr(0, files[files.length - 1].indexOf(".json"))) + 1;
+            }
+                let episode = yield methods.findSuitableFile(c, settings.queueDir);
+                  song.id = episode;
+                    fs.writeFile(file, JSON.stringify(song), 'utf-8', function(err){
                         cb(err, song);
-                    }
-                    else{
-                    files.sort(function(a, b){
-                        return a < b ? -1 : 1;
                     });
-                    if(files.length === 0){
-                      var c = 0;
-                    }
-                    else {
-                      var c = parseInt(files[files.length - 1].substr(0, files[files.length - 1].indexOf(".json"))) + 1;
-                    }
-                        methods.findSuitableFile(c, vars.queueDir, function(file, episode){
-                          song.id = episode;
-                            fs.writeFile(file, JSON.stringify(song), 'utf-8', function(err){
-                                cb(err, song);
-                            });
-                        });
-                    }
-
                 });
             }
-        });
+
+            });
+        }
     },
     publish: function(id, cb){
         var methods = this;
 
-        fs.readFile(vars.queueDir+'/'+id+'.json', 'utf-8', function(err, song){
+        fs.readFile(settings.queueDir+'/'+id+'.json', 'utf-8', function(err, song){
           if(err){
             cb("Song does not exist.", false);
           }
           song = JSON.parse(song);
           var c = 0;
-          methods.findSuitableFile(c, vars.playlistDir, function(file, episode){
+          methods.findSuitableFile(c, settings.playlistDir, function(file, episode){
               delete song.id;
               song.episode = episode;
               playlist.push(song);
@@ -148,13 +144,13 @@ var methods = {
     delete: function(id, cb){
         var methods = this;
 
-        fs.readFile(vars.queueDir+'/'+id+'.json', 'utf-8', function(err, song){
+        fs.readFile(settings.queueDir+'/'+id+'.json', 'utf-8', function(err, song){
           if(err){
             cb("Song does not exist.", false);
           }
           else{
             song = JSON.parse(song);
-            fs.unlink(vars.queueDir+'/'+id+'.json', function(err){
+            fs.unlink(settings.queueDir+'/'+id+'.json', function(err){
               cb(err, song);
             });
           }
