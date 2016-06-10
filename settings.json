@@ -1,0 +1,20 @@
+{
+  "hostname": "localhost",
+  "title": "latenight.blue",
+  "keywords": "",
+
+  "apPass": "?!thisisaprettylongpassword",
+  "apUser": "adminoflnb",
+  "apRoute": "/ap",
+
+  "leEmail": "hello@benjaminbaedorf.com",
+  "leDir": ".",
+  "lePrivKeyFile": "",
+  "leFullChainFile": "",
+
+  "playlistDir": "./data/playlist/",
+  "queueDir": "./data/queue/",
+  "publicDir": "./public/",
+
+  "findSuitableMaxNum": 10000
+}
