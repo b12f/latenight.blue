@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 const fs = require('co-fs');
 const path = require('path');
@@ -6,18 +6,42 @@ const settings = require('./settings');
 
 const methods = {
     queue: null,
-    getQueue: function *(){
-        if (!this.queue) {
-            this.queue = yield this.scrapeFullJSON(settings.queueDir);
+    buildMeta: function (name, song) {
+        let string = settings[name].song;
+        if (!song) {
+            string = settings[name].home;
+            song = {
+                artist: '',
+                title: '',
+                episode: ''
+            };
         }
-        return this.queue;
+
+        return string
+            .replace('$$ARTIST', song.artist)
+            .replace('$$SONG_TITLE', song.title)
+            .replace('$$ARTIST', song.artist)
+            .replace('$$EPISODE', song.episode)
+            .replace('$$SITE_TITLE', settings.site_title);
     },
-    playlist: [],
-    getPlaylist: function *(){
-        if (!this.playlist) {
-            this.playlist = yield this.scrapeFullJSON(settings.playlistDir);
+    refreshCache: function *() {
+        methods.queue = null;
+        yield methods.getQueue();
+        methods.playlist = null;
+        yield methods.getPlaylist();
+    },
+    getQueue: function *(){
+        if (!methods.queue) {
+            methods.queue = yield this.scrapeFullJSON(settings.queueDir);
         }
-        return this.playlist;
+        return methods.queue;
+    },
+    playlist: null,
+    getPlaylist: function *(){
+        if (!methods.playlist) {
+            methods.playlist = yield this.scrapeFullJSON(settings.playlistDir);
+        }
+        return methods.playlist;
     },
     scrapeFullJSON: function *(dir){
         let playlist = [];
@@ -27,7 +51,13 @@ const methods = {
         let c = 0;
 
         if(files.length===0){
-            return [];
+            return [{
+                url: '',
+                title: 'No entries yet',
+                artist: '',
+                episode: 0,
+                album: ''
+            }];
         }
         for(let i = 0; i < files.length; i++){
             let file = files[i];
@@ -36,7 +66,7 @@ const methods = {
             song = JSON.parse(song);
             playlist.push(song);
             if(c === files.length){
-                return methods.sortArrayByKey(playlist, "episode", true);
+                return methods.sortArrayByKey(playlist, 'episode', true);
             }
         }
     },
@@ -59,7 +89,7 @@ const methods = {
 
         for(let i = 0; i < queue.length; i++){
             if((queue[i].title === song.title && queue[i].artist === song.artist) || (queue[i].url === song.url) ){
-                exists = queue[i].url;
+                exists = queue[i];
                 break;
             }
         }
@@ -67,103 +97,99 @@ const methods = {
             let playlist = yield methods.getPlaylist();
             for(let i = 0; i < playlist.length; i++){
                 if((playlist[i].title === song.title && playlist[i].artist === song.artist) || (playlist[i].url === song.url) ){
-                    exists = playlist[i].url;
+                    exists = playlist[i];
                     break;
                 }
             }
         }
 
-        return exists;
+        return exists.url;
     },
     findSuitableFile: function *(c, dir){
         let methods = this;
 
         if (c > settings.findSuitableMaxNum) {
-            console.log('Max file entries reached. Increase findSuitableMaxNum in settings.')
+            throw 'Max file entries reached. Increase findSuitableMaxNum in settings make sure playlistDir and queueDir are read-/writable.';
         }
-
         try {
-            yield fs.access(path.join(dir, c + '.json'), fs.F_OK);
+            yield fs.readFile(path.join(dir, c + '.json'), fs.F_OK);
+        } catch(e) {
             return {
                 file: path.join(dir, c + '.json'),
                 episode: c
             };
-        } catch(e) {
-            c++;
-            return yield methods.findSuitableFile(c, dir);
         }
+        c++;
+        return yield methods.findSuitableFile(c, dir);
     },
     save: function *(song){
         let methods = this;
         let exists = yield methods.songExists(song);
 
         if(exists){
-            return {
-                err: "Song already seems to exist on url " + exists + ".",
-                song: song
-            };
+            return 'Song already seems to exist on url ' + exists + '.';
         }
-        try {
-            let files = fs.readdir(settings.queueDir);
 
-            files.sort(function(a, b){
-                return a < b ? -1 : 1;
-            });
-            let c = 0;
-            if(files.length !== 0){
-                c = parseInt(files[files.length - 1].substr(0, files[files.length - 1].indexOf(".json"))) + 1;
-            }
-            let sf = yield methods.findSuitableFile(c, settings.queueDir);
-            song.id = sf.episode;
+        let files = yield fs.readdir(settings.queueDir);
 
-            fs.writeFile(sf.file, JSON.stringify(song), 'utf-8');
-
-            return song;
-        } catch (err) {
-            return {
-                err: err,
-                song: song
-            };
+        files.sort(function(a, b){
+            return a < b ? -1 : 1;
+        });
+        let c = 0;
+        if(files.length !== 0){
+            c = parseInt(files[files.length - 1].substr(0, files[files.length - 1].indexOf('.json'))) + 1;
         }
+        let sf = yield methods.findSuitableFile(c, settings.queueDir);
+        song.id = sf.episode;
+
+        yield fs.writeFile(sf.file, JSON.stringify(song), 'utf-8');
+
+        yield methods.refreshCache();
+
+        return song;
     },
     publish: function *(id){
         let methods = this;
-
+        let song;
         try {
-            let song = fs.readFile(path.join(settings.queueDir, id + '.json'), 'utf-8');
-
-            song = JSON.parse(song);
-            let c = 0;
-            let sf = methods.findSuitableFile(c, settings.playlistDir);
-            delete song.id;
-            song.episode = sf.episode;
-            playlist.push(song);
-            try {
-                yield fs.writeFile(sf.file, JSON.stringify(song), 'utf-8');
-                yield methods.delete(id);
-                return {
-                    err: null,
-                    song: song
-                };
-            } catch(e) {
-                console.log(e);
-                return {
-                    err: err,
-                    song: song
-                };
-            }
+            song = yield fs.readFile(path.join(settings.queueDir, id + '.json'), 'utf-8');
         } catch (err) {
+            console.log(err);
             return 'Song does not exist';
         }
+
+        song = JSON.parse(song);
+        let c = 0;
+        let sf = yield methods.findSuitableFile(c, settings.playlistDir);
+        delete song.id;
+        song.episode = sf.episode;
+        yield fs.writeFile(sf.file, JSON.stringify(song), 'utf-8');
+        yield methods.delete(id);
+        yield methods.refreshCache();
+
+        return song;
     },
     delete: function *(id){
+        let song;
         try {
-            let song = JSON.parse(path.join(settings.queueDir, id + '.json'), 'utf-8');
+            song = yield fs.readFile(path.join(settings.queueDir, id + '.json'), 'utf-8');
             yield fs.unlink(path.join(settings.queueDir, id + '.json'));
-            return JSON.parse(song);
         } catch(err) {
-            return 'Song does not exist';
+            return 'Song does not exist or is not deletable';
         }
+
+        yield methods.refreshCache();
+
+        return JSON.parse(song);
+    },
+    findEpisodeInPlaylist(ep, playlist) {
+        for(let i = 0; i < playlist.length; i++){
+            if(playlist[i].episode === ep){
+                return playlist[i];
+            }
+        }
+
+        return false;
     }
 };
 

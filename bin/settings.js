@@ -3,7 +3,6 @@
 const path = require('path');
 let settings = require('../settings.json');
 
-
 for (let key in settings) {
     if (key.substr(-3) === 'Dir' || key.substr(-4) === 'File') {
         settings[key] = path.normalize(settings[key]);
@@ -13,6 +12,10 @@ for (let key in settings) {
     }
 }
 
-settings.baseUrl = 'https://' + settings.hostname + '/';
+let protocol = 'http';
+if (settings.useLetsEncrypt) {
+    protocol = 'https';
+}
+settings.baseUrl = protocol + '://' + settings.hostname + '/';
 
 module.exports = settings;

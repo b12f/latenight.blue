@@ -102,7 +102,7 @@ a:active {
     color: #999999;
     text-shadow: 0px 0px 5px rgba(255, 255, 255, 0.4);
 }
-a.disabled{
+a.disabled {
     color: grey;
     cursor: default;
 }
@@ -129,15 +129,14 @@ input, button {
             transition: all 0.2s ease-in;
 }
 input[type="text"]{
-    min-width: 60%;
-    max-width: 100%;
+    width: 100%;
 }
-input[type="submit"], button{
+input[type="submit"], button {
     margin-top: 6px;
     border: 1px solid rgba(255,255,255,0.2);
     cursor: pointer;
 }
-input[type="submit"]:hover, input[type="submit"]:active, button:hover, button:active{
+input[type="submit"]:hover, input[type="submit"]:active, button:hover, button:active {
     background-color: rgba(255,255,255,0.1);
 }
 input:hover, button:hover {

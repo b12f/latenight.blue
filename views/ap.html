@@ -2,7 +2,7 @@
     <head>
       <meta name="theme-color" content="#282c34">
       <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
-        <title><%= vars.title %></title>
+        <title>Admin Panel - <%= settings.site_title %></title>
         <%
             for(var i=0; i< stylesheets.length; i++){
                 %>
@@ -24,13 +24,13 @@
     %></div>
         <main id="main">
             <header>
-                <a href="<%= vars.homeurl %>"><h1><%= vars.title %></h1></a>
+                <a href="<%= settings.baseUrl %>"><h1><%= settings.site_title %></h1></a>
             </header>
             <form method="post">
-                <div id="title" type="text" <% if(typeof song !== 'undefined'){%>value="<%= song.title %>"<% } %> placeholder="Title" name="title" required></div><br />
-                <div id="artist" type="text" <% if(typeof song !== 'undefined'){%>value="<%= song.artist %>"<% } %> placeholder="Artist" name="artist" required></div><br />
-                <div id="album" type="text" <% if(typeof song !== 'undefined'){%>value="<%= song.album %>"<% } %> placeholder="Album" name="album" required></div><br />
-                <div id="url" type="text" <% if(typeof song !== 'undefined'){%>value="<%= song.url %>"<% } %> placeholder="Youtube or Soundcloud URL" name="url" required></div><br />
+                <input id="title" type="text" <% if(typeof song !== 'undefined'){%>value="<%= song.title %>"<% } %> placeholder="Title" name="title" required /><br />
+                <input id="artist" type="text" <% if(typeof song !== 'undefined'){%>value="<%= song.artist %>"<% } %> placeholder="Artist" name="artist" required /><br />
+                <input id="album" type="text" <% if(typeof song !== 'undefined'){%>value="<%= song.album %>"<% } %> placeholder="Album" name="album" required /><br />
+                <input id="url" type="text" <% if(typeof song !== 'undefined'){%>value="<%= song.url %>"<% } %> placeholder="Youtube or Soundcloud URL" name="url" required /><br />
                 <p></p>
                 <input type="submit" value="Submit" name="submit" />
             </form>
@@ -58,9 +58,6 @@
               </div>
             </form>
         </main>
-        <script type="text/javascript">
-        var playlist = <%= JSON.stringify(playlist) %>
-        </script>
         <%
             for(var i=0; i< scripts.length; i++){
                 %>
@@ -68,7 +65,5 @@
                 <%
             }
         %>
-
-        </script>
     </body>
 </html>

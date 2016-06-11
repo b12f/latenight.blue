@@ -1,7 +1,9 @@
 node_modules/
 npm-debug.log
-bin/vars.js
+settings.json
 npm-debug.log
 data/queue/**
 data/playlist/**
 .idea/
+le/
+acme-challenge/

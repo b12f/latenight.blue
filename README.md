@@ -14,20 +14,24 @@ Enter the directory and install the required node modules.
 
 Create the variables file.
 
-    mv bin/vars.js.example bin/vars.js
+    cp settings.json.example settings.json
 
-Edit vars.js to fit your needs.
+Edit the settings to fit your needs.
 
-    nano bin/vars.js
+    nano settings.json
 
 Start the server
 
     npm start
 
+If you use ports below 1024, you need to run as root. This is not recommended, I wouldn't trust myself with root level access to your system. See also "Port fix" below.
+
+    sudo npm start
+
 Enjoy.
 
 ## Port fix
 
-If you wish to run this on port 80, best practice would be to redirect the port.
+If you wish to run this on port 80 or 443, best practice would be to redirect the port.
 
     sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 3000

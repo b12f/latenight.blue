@@ -1,20 +1,35 @@
 {
-  "hostname": "localhost",
-  "title": "latenight.blue",
+  "hostname": "localhost:3080",
+  "site_title": "latenight.blue",
   "keywords": "",
+  "description": {
+    "song": "Ep. $$EPISODE: $$SONG_TITLE by $$ARTIST - $$SITE_TITLE - Handpicked minimal Music",
+    "default": "Handpicked minimal Music"
+  },
+  "title": {
+    "song": "Ep. $$EPISODE: $$SONG_TITLE by $$ARTIST - $$SITE_TITLE",
+    "default": "$$HOSTNAME"
+  },
 
   "apPass": "?!thisisaprettylongpassword",
   "apUser": "adminoflnb",
   "apRoute": "/ap",
 
+  "scApiId": "",
+  "gaId": "",
+
+  "useLetsEncrypt": false,
   "leEmail": "hello@benjaminbaedorf.com",
-  "leDir": ".",
-  "lePrivKeyFile": "",
-  "leFullChainFile": "",
+  "leDir": "./le",
+  "lePrivKeyFile": "./le/lnb.pem",
+  "leFullChainFile": "./le/.nb_chain.pem",
 
   "playlistDir": "./data/playlist/",
   "queueDir": "./data/queue/",
   "publicDir": "./public/",
 
-  "findSuitableMaxNum": 10000
+  "findSuitableMaxNum": 10000,
+  "httpPort": 3080,
+  "httpsPort": 3443,
+  "leakStackTraces": false
 }
