@@ -8,9 +8,7 @@ const theme = new require('./bin/themes')(settings.theme);
 
 // Register the templating engine
 app.use(require('koa-render')(theme._viewDir, {
-    map: {
-        html: 'underscore'
-    }
+    map: theme._settings.engineMap
 }));
 
 // Set the static serving public dir

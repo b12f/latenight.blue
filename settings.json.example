@@ -3,30 +3,31 @@
   "site_title": "latenight.blue",
   "keywords": "",
   "description": {
-    "song": "Ep. $$EPISODE: $$SONG_TITLE by $$ARTIST - $$SITE_TITLE - Handpicked minimal Music",
+    "episode": "Ep. $$EPISODE: $$SONG_TITLE by $$ARTIST - $$SITE_TITLE - Handpicked minimal Music",
     "default": "Handpicked minimal Music"
   },
   "title": {
-    "song": "Ep. $$EPISODE: $$SONG_TITLE by $$ARTIST - $$SITE_TITLE",
+    "episode": "Ep. $$EPISODE: $$SONG_TITLE by $$ARTIST - $$SITE_TITLE",
     "default": "$$HOSTNAME"
   },
 
-  "apPass": "mypassword",
-  "apUser": "myusername",
-  "apRoute": "/admin",
+  "theme": "latenight.blue",
+
+  "apPass": "pleasechangeme",
+  "apUser": "pleaseibegyou",
+  "apRoute": "/ap",
 
   "scApiId": "",
   "gaId": "",
 
-  "useLetsEncrypt": true,
-  "leEmail": "johndoe@example.com",
+  "useLetsEncrypt": false,
+  "leEmail": "urmum@example.com",
   "leDir": "./le",
   "lePrivKeyFile": "./le/lnb.pem",
   "leFullChainFile": "./le/.nb_chain.pem",
 
   "playlistDir": "./data/playlist/",
   "queueDir": "./data/queue/",
-  "publicDir": "./public/",
 
   "findSuitableMaxNum": 10000,
   "httpPort": 3080,
