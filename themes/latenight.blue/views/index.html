@@ -24,9 +24,10 @@
     <meta property="og:site_name" content="<%= settings.site_title %>" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:image" content="<%= settings.baseUrl %>img/latenight.blue.square.png" />
-    <% for (var i = 0; i < stylesheets.length; i++) { %>
-        <link href="<%= stylesheets[i] %>" rel="stylesheet" />
-    <% } %>
+
+    <link href="/css/normalize.css" rel="stylesheet" />
+    <link href="/css/css.css" rel="stylesheet" />
+    <link href="http://fonts.googleapis.com/css?family=Oswald:400,300|Abril+Fatface&subset=latin,latin-ext" rel="stylesheet" />
 </head>
 <body>
     <div id="error">
@@ -93,9 +94,11 @@
     <% if (settings.scApiId) { %>
         <script type="text/javascript">var scApiId = '<%= settings.scApiId %>';</script>
     <% } %>
-    <% for (var i=0; i < scripts.length; i++) { %>
-        <script type="text/javascript" src="<%= scripts[i] %>"></script>
-    <% } %>
+
+    <script type="text/javascript" src="https://www.youtube.com/iframe_api"></script>
+    <script type="text/javascript" src="https://w.soundcloud.com/player/api.js"></script>
+    <script type="text/javascript" src="/js/lnb.js"></script>
+
     <% if (settings.gaId) { %>
         <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

@@ -4,33 +4,39 @@ const settings = require('./bin/settings');
 const koa = require('koa');
 const app = koa();
 const router = require('./bin/routes.js');
+const theme = new require('./bin/themes')(settings.theme);
 
-app.use(require('koa-render')(settings.viewDir, { // templating
+// Register the templating engine
+app.use(require('koa-render')(theme._viewDir, {
     map: {
         html: 'underscore'
     }
 }));
-app.use(require('koa-static')(settings.publicDir, {
+
+// Set the static serving public dir
+app.use(require('koa-static')(theme._publicDir, {
     maxage: (30*24*60*60*1000),
     defer: false
 }));
 
+// Logging
 app.use(function *onRequest(next) {
     let t = +(new Date());
     yield next;
     console.log(this.request.method, this.request.url, (+(new Date() - t)));
 });
 
+// Global request error catcher
 app.use(function *onError(next) {
     try {
         yield next;
     } catch (err) {
-        console.log(JSON.stringify(err, null, 4));
         let error = {
             message: err.message || err,
             status: err.status || 500,
             stack: err.stack || null
         }
+        console.log(err, error);
 
         if (!settings.leakStackTraces) {
             error.stack = null;
@@ -39,7 +45,6 @@ app.use(function *onError(next) {
         try {
             this.status = error.status;
             this.locals.pageOptions.error = error;
-            console.log(this.locals.pageOptions);
             this.body = yield this.render('error', this.locals.pageOptions);
         } catch(err) {
             this.status = 500;
@@ -50,6 +55,7 @@ app.use(function *onError(next) {
     }
 });
 
+// Global 404 handler
 app.use(function *pageNotFound(next){
     yield next;
 
@@ -76,12 +82,15 @@ app.use(function *pageNotFound(next){
     }
 });
 
+
+// Register routes and methods
 app
 .use(router.routes())
 .use(router.allowedMethods());
 
 
 if (settings.useLetsEncrypt) {
+    // Configure lets encrypt and set two listening servers
     /* Note: using staging server url, remove .testing() for production
     Using .testing() will overwrite the debug flag with true */
     const LEX = require('letsencrypt-express').testing();
@@ -90,8 +99,7 @@ if (settings.useLetsEncrypt) {
         configDir: settings.leDir,
         fullchainTpl: settings.leFullChainFile,
         privkeyTpl: settings.lePrivKeyFile,
-        approveRegistration: function (hostname, cb) { // leave `null` to disable automatic registration
-            // Note: this is the place to check your database to get the user associated with this domain
+        approveRegistration: function (hostname, cb) {
 
             console.log(hostname, settings);
 
@@ -118,5 +126,6 @@ if (settings.useLetsEncrypt) {
         console.log('Redirecting insecure traffic from http://' + settings.hostname + ':' + this.address().port + ' to https');
     });
 } else {
+    // Listen on http only
     app.listen(settings.httpPort);
 }

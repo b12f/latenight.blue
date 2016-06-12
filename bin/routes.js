@@ -6,6 +6,7 @@ const koaBody = require('koa-body')();
 const methods = require('./methods');
 const settings = require('./settings');
 const auth = require('koa-basic-auth')({ name: settings.apUser, pass: settings.apPass });
+const theme = new require('./themes')(settings.theme);
 
 router.use(function *(next){
     try {
@@ -22,17 +23,23 @@ router.use(function *(next){
 });
 
 router.use(function *(next){
+    let playlist = yield methods.getPlaylist();
+    let queue = yield methods.getQueue();
+
     // Set locals
-    this.locals = {};
-    this.locals.pageOptions = {
-        settings: settings,
-        stylesheets: [
-            settings.baseUrl+'css/normalize.css',
-            settings.baseUrl+'css/css.css',
-            'http://fonts.googleapis.com/css?family=Oswald:400,300|Abril+Fatface&subset=latin,latin-ext'
-        ],
-        scripts: [],
-        buildMeta: methods.buildMeta
+    this.locals = {
+        renderData: {
+            settings: settings,
+            themeSettings: theme._settings,
+            themeFn: theme._fn,
+            buildMeta: methods.buildMeta,
+            playlist: playlist,
+            queue: queue,
+            song: undefined,
+            episode: undefined,
+            success: undefined,
+            error: undefined
+        }
     };
     yield next;
 });
@@ -40,26 +47,26 @@ router.use(function *(next){
 /* GET playlist. */
 router.get('/playlist', function *(next) {
     this.set('Content-Type', 'application/json');
-    this.body = JSON.stringify(yield methods.getPlaylist());
+    this.body = JSON.stringify(this.locals.renderData.playlist);
 });
 /* Post new song */
 router.post(settings.apRoute, koaBody, auth, function *(next) {
     if(this.request.body.deleteID){
         let res = yield methods.delete(this.request.body.deleteID);
         if (typeof(res) === 'string') {
-            this.locals.pageOptions.error = res;
+            this.locals.renderData.error = res;
         } else {
             let song = res;
-            this.locals.pageOptions.success = 'Deleted '+song.title+' by '+song.artist+' successfully from queue.';
+            this.locals.renderData.success = 'Deleted '+song.title+' by '+song.artist+' successfully from queue.';
         }
     }
     else if(this.request.body.publishID){
         let res = yield methods.publish(this.request.body.publishID);
         if (typeof(res) === 'string') {
-            this.locals.pageOptions.error = res;
+            this.locals.renderData.error = res;
         } else {
             let song = res;
-            this.locals.pageOptions.success = 'Published '+song.title+' by '+song.artist+' as episode '+song.episode+'.';
+            this.locals.renderData.success = 'Published '+song.title+' by '+song.artist+' as episode '+song.episode+'.';
         }
     }
     else{
@@ -76,15 +83,15 @@ router.post(settings.apRoute, koaBody, auth, function *(next) {
         &&(typeof(song.url)==='string' && song.url.length > 0)){
             let res = yield methods.save(song);
             if (typeof(res) === 'string') {
-                this.locals.pageOptions.error = res;
-                this.locals.pageOptions.song = song;
+                this.locals.renderData.error = res;
+                this.locals.renderData.song = song;
             } else {
-                this.locals.pageOptions.success = 'Saved '+song.title+' by '+song.artist+'.';
+                this.locals.renderData.success = 'Saved '+song.title+' by '+song.artist+'.';
             }
         }
         else{
-            this.locals.pageOptions.error = 'Missing or bad input.';
-            this.locals.pageOptions.song = song;
+            this.locals.renderData.error = 'Missing or bad input.';
+            this.locals.renderData.song = song;
         }
     }
     yield next;
@@ -92,34 +99,29 @@ router.post(settings.apRoute, koaBody, auth, function *(next) {
 
 /* GET adminpanel. */
 router.all(settings.apRoute, auth, function *(next) {
-    let playlist = yield methods.getPlaylist();
-    let queue = yield methods.getQueue();
-    this.locals.pageOptions.scripts.push(settings.baseUrl+'js/lnb_ap.js');
-    this.locals.pageOptions.playlist = playlist;
-    this.locals.pageOptions.queue = queue;
-    this.body = yield this.render('ap', this.locals.pageOptions);
+    this.body = yield this.render('ap', this.locals.renderData);
 });
 
-
 /* GET home page. */
+router.get('/', function *(next) {
+    let episode = playlist[0];
+    episode.isHome = true;
+    this.locals.renderData.episode = episode;
+    this.body = yield this.render('index', this.locals.renderData);
+});
 
-let mainPageFn = function *(next) {
-    this.locals.pageOptions.scripts.push('https://www.youtube.com/iframe_api');
-    this.locals.pageOptions.scripts.push('https://w.soundcloud.com/player/api.js');
-    this.locals.pageOptions.scripts.push(settings.baseUrl+'js/lnb.js');
-
-    let episode = parseInt(this.params.id);
-    let playlist = yield methods.getPlaylist();
+/* GET episode */
+router.get('/:id', function *(next) {
+    let episode = this.params.id;
+    let playlist = this.locals.renderData.playlist;
     episode = methods.findEpisodeInPlaylist(episode, playlist);
-    if (!episode) {
-        episode = playlist[0];
-        episode.isHome = true;
-    }
-    this.locals.pageOptions.episode = episode;
-    this.body = yield this.render('index', this.locals.pageOptions);
-};
 
-router.get('/:id', mainPageFn);
-router.get('/', mainPageFn);
+    if (!episode) {
+        this.redirect('/');
+    }
+
+    this.locals.renderData.episode = episode;
+    this.body = yield this.render('index', this.locals.renderData);
+});
 
 module.exports = router;
