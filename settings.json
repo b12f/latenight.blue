@@ -3,11 +3,11 @@
   "site_title": "latenight.blue",
   "keywords": "",
   "description": {
-    "song": "Ep. $$EPISODE: $$SONG_TITLE by $$ARTIST - $$SITE_TITLE - Handpicked minimal Music",
+    "episode": "Ep. $$EPISODE: $$SONG_TITLE by $$ARTIST - $$SITE_TITLE - Handpicked minimal Music",
     "default": "Handpicked minimal Music"
   },
   "title": {
-    "song": "Ep. $$EPISODE: $$SONG_TITLE by $$ARTIST - $$SITE_TITLE",
+    "episode": "Ep. $$EPISODE: $$SONG_TITLE by $$ARTIST - $$SITE_TITLE",
     "default": "$$HOSTNAME"
   },
 

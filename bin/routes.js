@@ -28,18 +28,16 @@ router.use(function *(next){
 
     // Set locals
     this.locals = {
-        renderData: {
-            settings: settings,
-            themeSettings: theme._settings,
-            themeFn: theme._fn,
-            buildMeta: methods.buildMeta,
-            playlist: playlist,
-            queue: queue,
-            song: undefined,
-            episode: undefined,
-            success: undefined,
-            error: undefined
-        }
+        settings: settings,
+        themeSettings: theme._settings,
+        themeFn: theme._fn,
+        buildMeta: methods.buildMeta,
+        playlist: playlist,
+        queue: queue,
+        song: undefined,
+        episode: undefined,
+        success: undefined,
+        error: undefined
     };
     yield next;
 });
@@ -47,26 +45,26 @@ router.use(function *(next){
 /* GET playlist. */
 router.get('/playlist', function *(next) {
     this.set('Content-Type', 'application/json');
-    this.body = JSON.stringify(this.locals.renderData.playlist);
+    this.body = JSON.stringify(this.locals.playlist);
 });
 /* Post new song */
 router.post(settings.apRoute, koaBody, auth, function *(next) {
     if(this.request.body.deleteID){
         let res = yield methods.delete(this.request.body.deleteID);
         if (typeof(res) === 'string') {
-            this.locals.renderData.error = res;
+            this.locals.error = res;
         } else {
             let song = res;
-            this.locals.renderData.success = 'Deleted '+song.title+' by '+song.artist+' successfully from queue.';
+            this.locals.success = 'Deleted '+song.title+' by '+song.artist+' successfully from queue.';
         }
     }
     else if(this.request.body.publishID){
         let res = yield methods.publish(this.request.body.publishID);
         if (typeof(res) === 'string') {
-            this.locals.renderData.error = res;
+            this.locals.error = res;
         } else {
             let song = res;
-            this.locals.renderData.success = 'Published '+song.title+' by '+song.artist+' as episode '+song.episode+'.';
+            this.locals.success = 'Published '+song.title+' by '+song.artist+' as episode '+song.episode+'.';
         }
     }
     else{
@@ -83,45 +81,47 @@ router.post(settings.apRoute, koaBody, auth, function *(next) {
         &&(typeof(song.url)==='string' && song.url.length > 0)){
             let res = yield methods.save(song);
             if (typeof(res) === 'string') {
-                this.locals.renderData.error = res;
-                this.locals.renderData.song = song;
+                this.locals.error = res;
+                this.locals.song = song;
             } else {
-                this.locals.renderData.success = 'Saved '+song.title+' by '+song.artist+'.';
+                this.locals.success = 'Saved '+song.title+' by '+song.artist+'.';
             }
         }
         else{
-            this.locals.renderData.error = 'Missing or bad input.';
-            this.locals.renderData.song = song;
+            this.locals.error = 'Missing or bad input.';
+            this.locals.song = song;
         }
     }
+    this.locals.playlist = yield methods.getPlaylist();
+    this.locals.queue = yield methods.getQueue();
     yield next;
 });
 
 /* GET adminpanel. */
 router.all(settings.apRoute, auth, function *(next) {
-    this.body = yield this.render('ap', this.locals.renderData);
+    this.body = yield this.render('ap', this.locals);
 });
 
 /* GET home page. */
 router.get('/', function *(next) {
-    let episode = playlist[0];
+    let episode = this.locals.playlist[0];
     episode.isHome = true;
-    this.locals.renderData.episode = episode;
-    this.body = yield this.render('index', this.locals.renderData);
+    this.locals.episode = episode;
+    this.body = yield this.render('index', this.locals);
 });
 
 /* GET episode */
 router.get('/:id', function *(next) {
     let episode = this.params.id;
-    let playlist = this.locals.renderData.playlist;
+    let playlist = this.locals.playlist;
     episode = methods.findEpisodeInPlaylist(episode, playlist);
 
     if (!episode) {
         this.redirect('/');
     }
 
-    this.locals.renderData.episode = episode;
-    this.body = yield this.render('index', this.locals.renderData);
+    this.locals.episode = episode;
+    this.body = yield this.render('index', this.locals);
 });
 
 module.exports = router;

@@ -6,11 +6,11 @@ const settings = require('./settings');
 
 const methods = {
     queue: null,
-    buildMeta: function (name, song) {
-        let string = settings[name].song;
-        if (!song) {
-            string = settings[name].home;
-            song = {
+    buildMeta: function (name, episode) {
+        let string = settings[name].episode;
+        if (!episode) {
+            string = settings[name].default;
+            episode = {
                 artist: '',
                 title: '',
                 episode: ''
@@ -18,11 +18,11 @@ const methods = {
         }
 
         return string
-            .replace('$$ARTIST', song.artist)
-            .replace('$$SONG_TITLE', song.title)
-            .replace('$$ARTIST', song.artist)
-            .replace('$$EPISODE', song.episode)
-            .replace('$$SITE_TITLE', settings.site_title);
+            .replace('$$ARTIST', episode.artist)
+            .replace('$$SONG_TITLE', episode.title)
+            .replace('$$ARTIST', episode.artist)
+            .replace('$$EPISODE', episode.episode)
+            .replace('$$SITE_TITLE', episode.site_title);
     },
     refreshCache: function *() {
         methods.queue = null;

@@ -44,8 +44,8 @@ app.use(function *onError(next) {
 
         try {
             this.status = error.status;
-            this.locals.pageOptions.error = error;
-            this.body = yield this.render('error', this.locals.pageOptions);
+            this.locals.error = error;
+            this.body = yield this.render('error', this.locals);
         } catch(err) {
             this.status = 500;
             this.body = '<h1>Everything went wrong</h1><p>An error occurred and then another one while trying to handle that error.</p>';
