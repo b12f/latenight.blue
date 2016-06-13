@@ -1,5 +1,5 @@
 {
-  "hostname": "latenight.blue:3080",
+  "hostname": "latenight.blue",
   "site_title": "latenight.blue",
   "keywords": "",
   "description": {
@@ -30,7 +30,7 @@
   "queueDir": "./data/queue/",
 
   "findSuitableMaxNum": 10000,
-  "httpPort": 3080,
+  "httpPort": 3000,
   "httpsPort": 3443,
   "leakStackTraces": false
 }
