@@ -7,9 +7,7 @@ const router = require('./bin/routes.js');
 const theme = new require('./bin/themes')(settings.theme);
 console.log(theme);
 // Register the templating engine
-app.use(require('koa-render')(theme._viewDir, {
-    map: theme._settings.engineMap
-}));
+app.use(require('koa-render')(theme._viewDir, theme._settings.engineMap));
 
 // Set the static serving public dir
 app.use(require('koa-static')(theme._publicDir, {
