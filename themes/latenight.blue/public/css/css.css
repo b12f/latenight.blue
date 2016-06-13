@@ -1,5 +1,4 @@
-@import url(http://weloveiconfonts.com/api/?family=iconicstroke);
-@import url(http://weloveiconfonts.com/api/?family=iconicfill);
+@import url('/css/iconicstroke.css');
 
 /* iconicfill */
 [class*="iconicfill-"]:before {
