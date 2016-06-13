@@ -20,7 +20,7 @@
   "scApiId": "",
   "gaId": "",
 
-  "useLetsEncrypt": false,
+  "useLetsEncrypt": true,
   "leEmail": "hello@benjaminbaedorf.com",
   "leDir": "./le",
   "lePrivKeyFile": "./le/lnb.pem",
