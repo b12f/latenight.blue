@@ -7,7 +7,9 @@ const router = require('./bin/routes.js');
 const theme = new require('./bin/themes')(settings.theme);
 
 // Register the templating engine
-app.use(require('koa-render')(theme._viewDir, theme._settings.engineMap));
+app.use(require('koa-render')(theme._viewDir, {
+	map: theme._settings.engineMap
+}));
 
 // Set the static serving public dir
 app.use(require('koa-static')(theme._publicDir, {
@@ -84,20 +86,17 @@ app
 .use(router.routes())
 .use(router.allowedMethods());
 
-
 if (settings.useLetsEncrypt) {
     // Configure lets encrypt and set two listening servers
     /* Note: using staging server url, remove .testing() for production
     Using .testing() will overwrite the debug flag with true */
-    const LEX = require('letsencrypt-express').testing();
+    const LEX = require('letsencrypt-express');
 
     const lex = LEX.create({
         configDir: settings.leDir,
         fullchainTpl: settings.leFullChainFile,
         privkeyTpl: settings.lePrivKeyFile,
         approveRegistration: function (hostname, cb) {
-
-            console.log(hostname, settings);
 
             cb(null, {
                 domains: [settings.hostname],
