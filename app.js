@@ -5,7 +5,7 @@ const koa = require('koa');
 const app = koa();
 const router = require('./bin/routes.js');
 const theme = new require('./bin/themes')(settings.theme);
-
+console.log(theme);
 // Register the templating engine
 app.use(require('koa-render')(theme._viewDir, {
     map: theme._settings.engineMap
