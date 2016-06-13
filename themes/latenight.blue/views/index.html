@@ -30,11 +30,7 @@
     <link href="https://fonts.googleapis.com/css?family=Oswald:400,300|Abril+Fatface&subset=latin,latin-ext" rel="stylesheet" />
 </head>
 <body>
-    <div id="error">
-        <% if (typeof(error) !== 'undefined') { %>
-            <%= error %>
-        <% } %>
-    </div>
+    <div id="error"><% if (typeof(error) !== 'undefined') { %><%= error %><% } %></div>
     <main id="main">
         <header>
             <a href="<%= settings.baseUrl %>" title="<%= settings.site_title %>"><h1><%= settings.site_title %></h1></a>
