@@ -15,8 +15,8 @@ Current master is v2-beta and in development, v2 will sport the following new an
 * External hosting and streaming of all relevant data via YouTube and SoundCloud **Classic**
 * Publishing queue
 * One admin access
-* SEO friendly URLs like [YOUR DOMAIN NAME]/, [YOUR DOMAIN NAME]/23, [YOUR DOMAIN NAME]/40, or even [YOUR DOMAIN NAME]/80085, should you be very active **Classic**
-* No database and caching for minimal filesystem interaction
+* SEO friendly URLs like example.com/, example.com/23, example.com/40, or even example.com/80085 **Classic**
+* No database and caching for minimal filesystem interaction **Classic**
 
 
 # Try it out
