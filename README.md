@@ -4,7 +4,7 @@ This is the source for [latenight.blue](http://latenight.blue). Lnb is a careful
 
 # Features
 
-Current master is v2-beta and in development, v2 will sport the following new and old features:
+Current master is v2. It sports the following new and old features:
 
 * KoaJS as the base framework **New**
 * Let's Encrypt integration **New**
@@ -36,7 +36,7 @@ Create the config file.
 
 Edit the settings to fit your needs.
 
-    nano settings.json
+    nano config.json
 
 Start the server
 
@@ -78,7 +78,7 @@ settings.json stores the themes settings. Currently the only supported setting i
 
 Views get the following data to be used for rendering:
 
-    settings: [object app settings]
+    settings: [object app settings (config.json)]
     themeSettings: [object theme settings],
     themeFn: [object theme functions],
     buildMeta: [function build meta],
