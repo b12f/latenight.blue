@@ -30,9 +30,9 @@ Enter the directory and install the required node modules.
     cd latenight.blue
     npm install
 
-Create the variables file.
+Create the config file.
 
-    cp settings.json.example settings.json
+    cp config.json.example config.json
 
 Edit the settings to fit your needs.
 

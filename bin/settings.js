@@ -1,7 +1,7 @@
 "use strict";
 
 const path = require('path');
-let settings = require('../settings.json');
+let settings = require('../config.json');
 
 for (let key in settings) {
     if (key.substr(-3) === 'Dir' || key.substr(-4) === 'File') {
