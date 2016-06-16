@@ -224,9 +224,10 @@ width: 100%;
 #volumeWrap {
   display: inline-block;
   overflow: hidden;
+    text-align: left;
   height: 28px;
   width: 21px;
-  margin-bottom: -6px;
+  margin-bottom: -9px;
   transition: width 0.2s ease-out;
   -webkit-transition: width 0.2s ease-out;
 }
@@ -234,7 +235,7 @@ width: 100%;
   font-size: 17px;
 }
 #volumeWrap:hover {
-  width: 85px;
+  width: 90px;
 }
 #toggleVolumeWrap {
   padding-top: 2px;
