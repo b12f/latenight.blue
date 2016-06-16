@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<head>
+    <meta name="theme-color" content="#6fb4df">
+    <meta charset="UTF-8">
+    <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=no">
+
+    <link rel="icon" type="image/png" href="<%= settings.baseUrl %>img/etam.png">
+
+    <title id="pagetitle"><%= buildMeta('title', episode) %></title>
+    <meta property="og:title" content="<%= buildMeta('title', episode) %>" />
+    <meta name="description" content="<%= buildMeta('description', episode) %>" />
+    <meta property="og:description" content="<%= buildMeta('description', episode) %>" />
+    <meta name="keywords" content="<%= settings.keywords %>" />
+    <%
+    var curUrl = settings.baseUrl;
+    if (!episode.isHome) {
+        curUrl = settings.baseUrl + episode.episode;
+    }
+    %>
+    <meta property="og:url" content="<%= curUrl %>" />
+    <meta name="revisit-after" content="1 day" />
+    <meta name="language" content="English" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="<%= settings.site_title %>" />
+    <meta property="og:locale" content="en_US" />
+
+    <link href="/css/normalize.css" rel="stylesheet" />
+    <link href="/css/css.css" rel="stylesheet" />
+</head>
+<body>
+    <div id="error"><% if (typeof(error) !== 'undefined') { %><%= error %><% } %></div>
+    <main id="main">
+        <header>
+            <a href="<%= settings.baseUrl %>" title="<%= settings.site_title %>"><h1><%= settings.site_title %></h1></a>
+            <span>episode</span> <span id="episode"><%= episode.episode %></span>
+        </header>
+        <div id="wrap">
+            <a id="url" title="Open Source" target="_blank" href="<%= episode.url %>"><h2 id="title"><%= episode.title %></h2>
+                <span id="artist"><%= episode.artist %></span> <span>-</span> <span id="album"><%= episode.album %></span>
+            </a><br /><br />
+            <div id="playerWrap">
+                <a title="Previous [Left Arrow]" href="javascript:void(0)" id="previous" data-action="previous"><span class="iconicstroke-first nomargin"></span></a>
+                <a title="Play / Pause [Spacebar]" href="javascript:void(0)" id="playpause" data-action="togglePlay"><span class="iconicstroke-play" id="playpausebutton"></span></a>
+                <a title="Next [Right Arrow]" href="javascript:void(0)" id="next" data-action="next"><span class="iconicstroke-last"></span></a>
+                <span class="spacer"></span>
+                <span class="one small"><span id="timeIndex">00:00</span> <span>/</span> <span id="length">00:00</span></span>
+
+                <span class="spacer"></span>
+                <span id="volumeWrap">
+                    <a title="Volume Mute [M]" href="javascript:void(0)" id="toggleVolumeWrap" data-action="toggleVolume">
+                        <span class="iconicstroke-volume" id="toggleVolume"></span>
+                    </a>
+                    <a id="volumeBar" href="javascript:void(0)" data-action="setVolume">
+                        <div id="volume" style="width: 100%;"></div>
+                    </a>
+                </span>
+                <a title="Like [H]" href="javascript:void(0)" data-action="toggleLike"><span id="toggleLike" class="iconicstroke-heart-stroke"></span></a>
+                <a title="Show Playlists [P]" href="javascript:void(0)" id="togglePlaylistShow" data-action="togglePlaylistShow"><span class="iconicstroke-list"></span></a>
+                <a title="Shuffle [S]" href="javascript:void(0)" id="toggleShuffle" data-action="toggleShuffle"><span class="iconicstroke-fork"></span></a>
+                <a title="Show Player [V]" href="javascript:void(0)" id="togglePlayerShow" data-action="togglePlayerShow"><span class="iconicstroke-eye"></span></a>
+                <a title="Show information [I]" target="_blank" href="javascript:void(0)" id="toggleInfoShow" data-action="toggleInfoShow" ><span class="iconicstroke-info"></span></a>
+                <br /><br />
+                <p id="mobilewarning">Mobile devices might have trouble auto-starting media. Click the eye icon and start by hand if this is the case for you.</p>
+                <div id="extras">
+                    <div id="extPlayerWrap"></div>
+                    <div id="about" class="hidden">
+                        <p>
+                            This is a lazy fork of <a href="https://latenight.blue/">latenight.blue</a>, another project by us. 11:30 aims to bring you the best morning music.
+                        </p>
+                    </div>
+                    <div id="playlistWrap">
+                        <h3>Playlist</h3>
+                        <a title="Play liked tracks [L]" href="javascript:void(0)" data-action="toggleLikedOnly"><span id="toggleLikedOnly" class="iconicstroke-heart-stroke"></span> Play liked only</a>
+                        <div id="playlist"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <% settings.scApiId = settings.scApiId ? settings.scApiId : ''; %>
+
+    <script type="text/javascript">var scApiId = '<%= settings.scApiId %>';</script>
+
+    <script type="text/javascript" src="https://www.youtube.com/iframe_api"></script>
+    <script type="text/javascript" src="https://w.soundcloud.com/player/api.js"></script>
+    <script type="text/javascript" src="/js/lnb.js"></script>
+
+    <% if (settings.gaId) { %>
+        <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', '<%= settings.gaId %>', 'auto');
+        ga('send', 'pageview');
+
+        </script>
+    <% } %>
+</body>
+</html>

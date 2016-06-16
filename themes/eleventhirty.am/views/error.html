@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+    <head>
+      <meta name="theme-color" content="#6fb4df">
+      <meta charset="UTF-8">
+      <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=no">
+      <title>Oh noes!</title>
+      <link href="/css/normalize.css" rel="stylesheet" />
+      <link href="/css/css.css" rel="stylesheet" />
+    </head>
+    <body>
+        <main id="main" style="max-width: 1200px;">
+            <header>
+                <a href="<%= settings.baseUrl %>"><h1>Oh noes! Error <%= error.status %></h1></a>
+            </header>
+              <p><%= error.message %></p>
+              <% if (error.stack) { %>
+                <pre><%= error.stack %></pre>
+              <% } %>
+              <p>Think you can do better? We're open source! See what happens in the background on [<a href="https://github.com/b12f/latenight.blue" title="Github">Github</a>].
+        </main>
+    </body>
+</html>

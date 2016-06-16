@@ -1,0 +1,297 @@
+@import 'https://fonts.googleapis.com/css?family=Bungee';
+@import url('/css/iconicstroke.css');
+
+/* iconicfill */
+[class*="iconicfill-"]:before {
+    font-family: 'IconicFill', sans-serif;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+/* iconicstroke */
+[class*="iconicstroke-"]:before {
+    font-family: 'IconicStroke', sans-serif;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+html {
+  height:100%;
+  width:100%;
+}
+body {
+    background-color: #6fb4df;
+    background-image: url(https://images.unsplash.com/photo-1428189923803-e9801d464d76?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&s=40e43c26d48dfcaaf80670e1639c1af7);
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: white;
+    margin: 0 auto;
+    font-size: 18px;
+    font-family: 'Bungee', sans-serif;
+    width: 100%;
+    text-align: center;
+
+    transition: background-color 0.2s ease-out, color 0.2s ease-out;
+    -webkit-transition: background-color 0.2s ease-out, color 0.2s ease-out;
+}
+#main {
+    background: rgba(0, 0, 0, 0.4);
+    margin: 100px auto;
+    width: 100%;
+    max-width: 600px;
+    max-height: 600px;
+    overflow: auto;
+    padding: 50px;
+    text-align: center;
+}
+#main::-webkit-scrollbar {
+    width: 1em;
+}
+
+#main::-webkit-scrollbar-track {
+    background: white;
+}
+
+#main::-webkit-scrollbar-thumb {
+    background-color: #6fb4df;
+    outline: 1px solid white;
+}
+
+
+.nomargin {
+    margin-left: 0px;
+}
+#error, #success {
+    display: none;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 5;
+    width: 100%;
+    max-height: 50px;
+    height: auto;
+    padding: 10px;
+    text-align:center;
+}
+#error {
+    background-color: #C52424;
+    border-bottom: 1px solid #8B0E0E;
+}
+#success {
+    background-color: #249B17;
+    border-bottom: 1px solid #196E10;
+}
+.success {
+    color: #0E6BC5
+}
+.spacer {
+  width: 10px;
+}
+h1 {
+    font-family: 'Bungee', cursive;
+    font-weight: normal;
+    font-size: 3em;
+    margin-bottom: 5px;
+    margin-top: 45px;
+    word-wrap: break-word;
+}
+header {
+  margin-bottom: 30px;
+}
+a{
+    text-shadow: 0px 0px 5px rgba(255, 255, 255, 0);
+    color: white;
+    text-decoration: none;
+    -webkit-transition: text-shadow 0.2s ease-in, background-color 0.2s ease-out, color 0.2s ease-out;
+            transition: text-shadow 0.2s ease-in, background-color 0.2s ease-out, color 0.2s ease-out;
+}
+a:hover {
+    text-shadow: 0px 0px 5px rgba(255, 255, 255, 0.6);
+}
+a:active {
+    color: #999999;
+    text-shadow: 0px 0px 5px rgba(255, 255, 255, 0.4);
+}
+a.disabled {
+    color: grey;
+    cursor: default;
+}
+a.glow {
+    text-shadow: 0px 0px 5px rgba(255, 255, 255, 1);
+}
+
+span {
+    display: inline-block;
+    min-height: 21px;
+    padding-right: 4px;
+}
+input, button {
+    color: white;
+    padding: 5px;
+    margin: 3px;
+    margin-bottom: 6px;
+    outline: none;
+    box-shadow: none;
+    border: none;
+    background: transparent;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    -webkit-transition: all 0.2s ease-in;
+            transition: all 0.2s ease-in;
+}
+input[type="text"]{
+    width: 100%;
+}
+input[type="submit"], button {
+    margin-top: 6px;
+    border: 1px solid rgba(255,255,255,0.2);
+    cursor: pointer;
+}
+input[type="submit"]:hover, input[type="submit"]:active, button:hover, button:active {
+    background-color: rgba(255,255,255,0.1);
+}
+input:hover, button:hover {
+    border-color:rgba(255,255,255,0.6);
+}
+input:active, button:active {
+    border-color: rgba(255,255,255,1);
+}
+select,
+select option {
+    background: #282c34;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+p {
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: lighter;
+    letter-spacing: 0.5px;
+}
+.small {
+    font-size: 14px;
+}
+#left, #right {
+    float: left;
+}
+#left {
+    width: 45%;
+    margin-right: 5%;
+}
+#right {
+    width: 45%;
+    margin-left: 5%;
+}
+.player,
+#about,
+#mobilewarning {
+    display: none;
+}
+.showPlayer .player.currentPlayer {
+    display: block;
+}
+#timeIndex, #length {
+    min-width: 35px;
+}
+
+.entry {
+  width: 100%;
+  overflow: hidden;
+  height: auto;
+  margin-top: 5px;
+  padding-top: 5px;
+}
+.entry a {
+    display: block;
+    width: 100%;
+}
+.buttons {
+  margin-top: -5px;
+display: block;
+width: 100%;
+}
+
+#volumeWrap {
+  display: inline-block;
+  overflow: hidden;
+  height: 28px;
+  width: 21px;
+  margin-bottom: -6px;
+  transition: width 0.2s ease-out;
+  -webkit-transition: width 0.2s ease-out;
+}
+#toggleVolume {
+  font-size: 17px;
+}
+#volumeWrap:hover {
+  width: 85px;
+}
+#toggleVolumeWrap {
+  padding-top: 2px;
+}
+#volumeWrap > * {
+  height: 100%;
+  display: inline-block;
+}
+#volumeBar {
+  overflow: hidden;
+  margin-bottom: 4px;
+  width: 0px;
+  height: 4px;
+  background-color: rgba(255, 255, 255, 0.3);
+  transition: width 0.25s ease-out;
+  -webkit-transition: width 0.25s ease-out;
+}
+#volumeWrap:hover #volumeBar {
+  width: 50px;
+}
+#volume {
+  background-color: white;
+  height: 4px;
+  display: block;
+  float: left;
+}
+
+#playlistWrap {
+    display: none;
+    font-weight: lighter;
+}
+
+#playlist {
+    padding-top: 20px;
+}
+
+#playlist > div {
+    width: 100%;
+    overflow: hidden;
+    min-height: 25px;
+}
+
+#playlist > div.current {
+    font-weight: normal;
+}
+#playlist > div > * {
+    display: inline-block;
+    min-width: 30px;
+}
+
+@media screen and (max-device-width: 550px) {
+    #playlist .song {
+        display: block;
+        width: 100%;
+    }
+}
+
+@media screen and (max-device-width: 768px) {
+  #mobilewarning {
+    display: inline-block;
+  }
+    #main {
+        width: 95%;
+        margin: 10% auto;
+    }
+}
