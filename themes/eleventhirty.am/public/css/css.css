@@ -205,7 +205,7 @@ p {
   margin-top: 5px;
   padding-top: 5px;
 }
-.entry a {
+.entry a:not(.like) {
     display: block;
     width: 100%;
 }
