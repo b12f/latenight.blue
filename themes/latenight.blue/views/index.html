@@ -89,7 +89,11 @@
     </main>
     <% settings.scApiId = settings.scApiId ? settings.scApiId : ''; %>
 
-    <script type="text/javascript">var scApiId = '<%= settings.scApiId %>';</script>
+    <script type="text/javascript">
+        var scApiId = '<%= settings.scApiId %>';
+        var title = <%= JSON.stringify(settings.title) %>;
+        var site_title = '<%= settings.site_title %>';
+    </script>
 
     <script type="text/javascript" src="https://www.youtube.com/iframe_api"></script>
     <script type="text/javascript" src="https://w.soundcloud.com/player/api.js"></script>

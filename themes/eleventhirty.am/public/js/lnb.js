@@ -823,13 +823,23 @@ function App() {
      * Adds a html5 history entry
      */
     app.addHistory = function() {
-        history.replaceState({index:player.index}, "Episode "+player.episode() +" of latenight.blue", ""+player.episode());
-        $("#pagetitle").innerHTML = "Episode "+player.episode() +" of latenight.blue";
-        ga('send', {
-            'hitType': 'pageview',
-            'page': '/'+player.episode(),
-            'title': "Episode "+player.episode() +" of latenight.blue"
-        });
+        let episode = player.currentSong();
+        let newTitle = title.episode
+            .replace('$$ARTIST', episode.artist)
+            .replace('$$SONG_TITLE', episode.title)
+            .replace('$$ARTIST', episode.artist)
+            .replace('$$EPISODE', episode.episode)
+            .replace('$$SITE_TITLE', site_title);
+
+        history.replaceState({index:player.index}, newTitle);
+        $("#pagetitle").innerHTML = newTitle;
+        if (ga) {
+            ga('send', {
+                'hitType': 'pageview',
+                'page': '/'+player.episode(),
+                'title': newTitle
+            });
+        }
     };
 
     /*
