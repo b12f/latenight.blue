@@ -22,7 +22,7 @@ const methods = {
             .replace('$$SONG_TITLE', episode.title)
             .replace('$$ARTIST', episode.artist)
             .replace('$$EPISODE', episode.episode)
-            .replace('$$SITE_TITLE', episode.site_title);
+            .replace('$$SITE_TITLE', settings.site_title);
     },
     refreshCache: function *() {
         methods.queue = null;
