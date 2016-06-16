@@ -114,6 +114,7 @@ router.get('/', function *(next) {
 router.get('/:id', function *(next) {
     let episode = this.params.id;
     let playlist = this.locals.playlist;
+
     episode = methods.findEpisodeInPlaylist(episode, playlist);
 
     if (!episode) {

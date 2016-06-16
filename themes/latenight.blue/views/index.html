@@ -87,9 +87,9 @@
             </div>
         </div>
     </main>
-    <% if (settings.scApiId) { %>
-        <script type="text/javascript">var scApiId = '<%= settings.scApiId %>';</script>
-    <% } %>
+    <% settings.scApiId = settings.scApiId ? settings.scApiId : ''; %>
+
+    <script type="text/javascript">var scApiId = '<%= settings.scApiId %>';</script>
 
     <script type="text/javascript" src="https://www.youtube.com/iframe_api"></script>
     <script type="text/javascript" src="https://w.soundcloud.com/player/api.js"></script>

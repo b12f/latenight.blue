@@ -183,6 +183,7 @@ const methods = {
         return JSON.parse(song);
     },
     findEpisodeInPlaylist(ep, playlist) {
+        ep = parseInt(ep);
         for(let i = 0; i < playlist.length; i++){
             if(playlist[i].episode === ep){
                 return playlist[i];
