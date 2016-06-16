@@ -40,7 +40,7 @@ body {
     -webkit-transition: background-color 0.2s ease-out, color 0.2s ease-out;
 }
 #main {
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0);
     margin: 100px auto;
     width: 100%;
     max-width: 600px;
@@ -48,6 +48,12 @@ body {
     overflow: auto;
     padding: 50px;
     text-align: center;
+
+    transition: background-color 0.2s ease-out, color 0.2s ease-out;
+    -webkit-transition: background-color 0.2s ease-out, color 0.2s ease-out;
+}
+#main:hover {
+    background: rgba(0, 0, 0, 0.4);
 }
 #main::-webkit-scrollbar {
     width: 1em;
