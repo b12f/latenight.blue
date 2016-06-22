@@ -153,6 +153,8 @@ input, button {
 }
 input[type="text"]{
     width: 100%;
+    font-weight: bold;
+    font-family: "Helvetica", "Arial", sans-serif;
 }
 input[type="submit"], button {
     margin-top: 6px;
