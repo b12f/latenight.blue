@@ -185,7 +185,7 @@ function App() {
                 player.skipTimeout = setTimeout(function() {
                     player.next();
                 }, 3000);
-                console.log(err);
+                console.log('A playback error occured:', err);
             }
 
             if (YTvideoId !== false) {
@@ -601,11 +601,12 @@ function App() {
                 var buttons = $("a.song");
                 for(var i = 0; i < buttons.length; i++) {
                     buttons[i].addEventListener('click', function(event) {
+                        console.log(event);
+
                         if (event.target.hasAttribute("data-episode")) {
                             var episode = parseInt(event.target.getAttribute("data-episode"));
+                            player.goTo(player.indexInPlaylist(player.playlist(), episode));
                         }
-
-                        player.goTo(player.indexInPlaylist(player.playlist(), episode));
                     });
                 }
 
