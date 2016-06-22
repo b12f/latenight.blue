@@ -41,7 +41,7 @@ body {
 }
 #main {
     background: rgba(0, 0, 0, 0);
-    margin: 60px auto;
+    margin: 60px;
     width: 100%;
     max-width: 600px;
     max-height: 600px;
@@ -278,8 +278,8 @@ width: 100%;
     min-height: 25px;
 }
 
-#playlist > div.current {
-    font-weight: normal;
+#playlist > div.current > * {
+    color: antiquewhite;
 }
 #playlist > div > * {
     display: inline-block;

@@ -23,6 +23,8 @@
                 <a href="<%= settings.baseUrl %>"><h1><%= settings.site_title %></h1></a>
             </header>
             <form method="post">
+                <p>Remember to check if a song exists already! <span id="toggleLike" class="iconicfill-heart-fill"></span> Ben</p>
+                <!-- Hi, Github! ♥ Ben -->
                 <input id="title" type="text" <% if(typeof song !== 'undefined'){%>value="<%= song.title %>"<% } %> placeholder="Title" name="title" required /><br />
                 <input id="artist" type="text" <% if(typeof song !== 'undefined'){%>value="<%= song.artist %>"<% } %> placeholder="Artist" name="artist" required /><br />
                 <input id="album" type="text" <% if(typeof song !== 'undefined'){%>value="<%= song.album %>"<% } %> placeholder="Album" name="album" required /><br />
