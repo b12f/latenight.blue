@@ -36,6 +36,13 @@ function App() {
         },
 
         /*
+         * returns the current song object
+         */
+        currentSong: function() {
+            return player.playlist()[player.index];
+        },
+
+        /*
          * Converts seconds into mm:ss format
          */
         convertTime: function(totalSeconds) {
@@ -382,18 +389,12 @@ function App() {
          * Accepts a boolean addHistory to specify whether a new html5 history entry should be made.
          */
         goTo: function(index, addHistory) {
+            var player = this;
             // Go to song
-            if (typeof index === "number" && 0 <= index && index < player.playlist().length ) {
+            if (typeof(index) === "number" && -1 < index && index < player.playlist().length ) {
                 player.index = index;
                 player.startPlayBack(addHistory);
             }
-        },
-
-        /*
-         * returns the current song object
-         */
-        currentSong: function() {
-            return player.playlist()[player.index];
         },
 
         /*
@@ -517,7 +518,7 @@ function App() {
          * returns number index
          */
         indexInPlaylist: function(playlist, episode) {
-            if (!episode) {
+            if (episode === undefined) {
                 episode = player.episode();
             }
 
@@ -601,8 +602,6 @@ function App() {
                 var buttons = $("a.song");
                 for(var i = 0; i < buttons.length; i++) {
                     buttons[i].addEventListener('click', function(event) {
-                        console.log(event);
-
                         if (event.target.hasAttribute("data-episode")) {
                             var episode = parseInt(event.target.getAttribute("data-episode"));
                             player.goTo(player.indexInPlaylist(player.playlist(), episode));
@@ -712,7 +711,7 @@ function App() {
          */
         getShuffledPlaylist: function() {
             var shuffledPlaylist = JSON.parse(JSON.stringify(player.playlist()));
-            var counter = player.playlist().length - 1;
+            var counter = player.playlist().length;
             var temp;
             var index;
 
