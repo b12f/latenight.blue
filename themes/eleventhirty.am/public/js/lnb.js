@@ -831,8 +831,8 @@ function App() {
      * Adds a html5 history entry
      */
     app.addHistory = function() {
-        let episode = player.currentSong();
-        let newTitle = title.episode
+        var episode = player.currentSong();
+        var newTitle = title.episode
             .replace('$$ARTIST', episode.artist)
             .replace('$$SONG_TITLE', episode.title)
             .replace('$$ARTIST', episode.artist)
