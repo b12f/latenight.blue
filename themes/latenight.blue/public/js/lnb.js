@@ -663,15 +663,23 @@ function App() {
         toggleVolume: function() {
             var volumeButton = $("#toggleVolume");
             if (player.YTPlayer.isMuted()) {
-                player.SCPlayer.setVolume(player.volume/100);
-                player.YTPlayer.unMute();
+                if (player.SCPlayer) {
+                    player.SCPlayer.setVolume(player.volume/100);
+                }
+                if (player.YTPlayer) {
+                    player.YTPlayer.unMute();
+                }
                 $("#volume").style.width = player.volume+"%";
                 app.removeClass(volumeButton,"iconicstroke-volume-mute");
                 app.addClass(volumeButton,"iconicstroke-volume");
             }
             else {
-                player.SCPlayer.setVolume(0);
-                player.YTPlayer.mute();
+                if (player.SCPlayer) {
+                    player.SCPlayer.setVolume(0);
+                }
+                if (player.YTPlayer) {
+                    player.YTPlayer.mute();
+                }
                 $("#volume").style.width = "0%";
                 app.removeClass(volumeButton,"iconicstroke-volume");
                 app.addClass(volumeButton,"iconicstroke-volume-mute");
@@ -949,80 +957,80 @@ function App() {
         });
     };
 
-    app.addClass = function(el, className) {
-        if (!el) {return;}
-        if (el.classList) {
-            el.classList.add(className);
-        }
-        else {
-            el.className += ' ' + className;
-        }
-    };
-
-    app.removeClass = function(el, className) {
-        if (!el) {return;}
-        if (el.classList) {
-            el.classList.remove(className);
-        }
-        else {
-            el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
-        }
-    };
-
-    app.hasClass = function(el, className) {
-        if (!el) {return;}
-        className = " " + className + " ";
-        return (" " + element.className + " ").replace(/[\n\t]/g, " ").indexOf(className) > -1;
-    };
-
-    app.toggleClass = function(el, className) {
-        if (!el) {return;}
-        if (el.classList) {
-            el.classList.toggle(className);
-        }
-        else {
-            if (app.hasClass(el, className)) {
-                app.removeClass(el, className);
-            } else {
-                app.addClass(el, className);
-            }
-        }
-    };
-
-    app.getStyle =  function(el,styleProp) {
-        if (!el) {return;}
-        if (el.currentStyle) {
-            var y = el.currentStyle[styleProp];
-        }
-        else if (window.getComputedStyle) {
-            var y = document.defaultView.getComputedStyle(el,null).getPropertyValue(styleProp);
-        }
-        else {
-            var y = undefined;
-        }
-        return y;
-    };
-
-
-    app.getJSON = function(url, callback) {
-        var request = new XMLHttpRequest();
-        request.open('GET', url, true);
-        request.onload = function() {
-            if (this.status >= 200 && this.status < 400) {
-                // Success!
-                var data = JSON.parse(this.response);
-                callback(data, false);
-            } else {
-                // We reached our target server, but it returned an error
-                callback(false, "Server responded with an error.")
-            }
-        };
-        request.onerror = function(e) {
-            // There was a connection error of some sort
-            callback(false, "An error occured fetching the playlist.")
-        };
-        request.send();
+app.addClass = function(el, className) {
+    if (!el) {return;}
+    if (el.classList) {
+        el.classList.add(className);
     }
+    else {
+        el.className += ' ' + className;
+    }
+};
+
+app.removeClass = function(el, className) {
+    if (!el) {return;}
+    if (el.classList) {
+        el.classList.remove(className);
+    }
+    else {
+        el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+    }
+};
+
+app.hasClass = function(el, className) {
+    if (!el) {return;}
+    className = " " + className + " ";
+    return (" " + element.className + " ").replace(/[\n\t]/g, " ").indexOf(className) > -1;
+};
+
+app.toggleClass = function(el, className) {
+    if (!el) {return;}
+    if (el.classList) {
+        el.classList.toggle(className);
+    }
+    else {
+        if (app.hasClass(el, className)) {
+            app.removeClass(el, className);
+        } else {
+            app.addClass(el, className);
+        }
+    }
+};
+
+app.getStyle =  function(el,styleProp) {
+    if (!el) {return;}
+    if (el.currentStyle) {
+        var y = el.currentStyle[styleProp];
+    }
+    else if (window.getComputedStyle) {
+        var y = document.defaultView.getComputedStyle(el,null).getPropertyValue(styleProp);
+    }
+    else {
+        var y = undefined;
+    }
+    return y;
+};
+
+
+app.getJSON = function(url, callback) {
+    var request = new XMLHttpRequest();
+    request.open('GET', url, true);
+    request.onload = function() {
+        if (this.status >= 200 && this.status < 400) {
+            // Success!
+            var data = JSON.parse(this.response);
+            callback(data, false);
+        } else {
+            // We reached our target server, but it returned an error
+            callback(false, "Server responded with an error.")
+        }
+    };
+    request.onerror = function(e) {
+        // There was a connection error of some sort
+        callback(false, "An error occured fetching the playlist.")
+    };
+    request.send();
+}
 
 
 }

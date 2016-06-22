@@ -663,15 +663,23 @@ function App() {
         toggleVolume: function() {
             var volumeButton = $("#toggleVolume");
             if (player.YTPlayer.isMuted()) {
-                player.SCPlayer.setVolume(player.volume/100);
-                player.YTPlayer.unMute();
+                if (player.SCPlayer) {
+                    player.SCPlayer.setVolume(player.volume/100);
+                }
+                if (player.YTPlayer) {
+                    player.YTPlayer.unMute();
+                }
                 $("#volume").style.width = player.volume+"%";
                 app.removeClass(volumeButton,"iconicstroke-volume-mute");
                 app.addClass(volumeButton,"iconicstroke-volume");
             }
             else {
-                player.SCPlayer.setVolume(0);
-                player.YTPlayer.mute();
+                if (player.SCPlayer) {
+                    player.SCPlayer.setVolume(0);
+                }
+                if (player.YTPlayer) {
+                    player.YTPlayer.mute();
+                }
                 $("#volume").style.width = "0%";
                 app.removeClass(volumeButton,"iconicstroke-volume");
                 app.addClass(volumeButton,"iconicstroke-volume-mute");
