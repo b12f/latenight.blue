@@ -839,7 +839,7 @@ function App() {
             .replace('$$EPISODE', episode.episode)
             .replace('$$SITE_TITLE', site_title);
 
-        history.replaceState({index:player.index}, newTitle);
+        history.replaceState({index:player.index}, newTitle, ""+player.episode());
         $("#pagetitle").innerHTML = newTitle;
         if (ga) {
             ga('send', {
