@@ -604,7 +604,7 @@ function App() {
                     buttons[i].addEventListener('click', function(event) {
                         if (event.target.hasAttribute("data-episode")) {
                             var episode = parseInt(event.target.getAttribute("data-episode"));
-                            player.goTo(player.indexInPlaylist(player.playlist(), episode));
+                            player.goTo(player.indexInPlaylist(player.playlist(), true));
                         }
                     });
                 }
