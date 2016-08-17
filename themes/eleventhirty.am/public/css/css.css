@@ -203,6 +203,7 @@ p {
 }
 .showPlayer .player.currentPlayer {
     display: block;
+    max-width: 100%;
 }
 #timeIndex, #length {
     min-width: 35px;

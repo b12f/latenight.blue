@@ -247,7 +247,7 @@ function App() {
                 });
             }
         },
-
+        
         /*
          * Unpauses
          */

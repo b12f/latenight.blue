@@ -78,7 +78,7 @@ router.post(settings.apRoute, koaBody, auth, function *(next) {
         if((typeof(song.title)==='string' && song.title.length > 0)
         &&(typeof(song.artist)==='string' && song.artist.length > 0)
         &&(typeof(song.album)==='string' && song.album.length > 0)
-        &&(typeof(song.url)==='string' && song.url.length > 0)){
+        &&(typeof(song.url)==='string' && song.url.length > 0 && song.url.startsWith('https://'))){
             let res = yield methods.save(song);
             if (typeof(res) === 'string') {
                 this.locals.error = res;
