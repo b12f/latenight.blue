@@ -44,6 +44,7 @@ router.use(function *(next){
 
 /* GET playlist. */
 router.get('/playlist', function *(next) {
+    this.set('Access-Control-Allow-Origin', '*');
     this.set('Content-Type', 'application/json');
     this.body = JSON.stringify(this.locals.playlist);
 });
