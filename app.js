@@ -93,7 +93,7 @@ if (settings.useLetsEncrypt) {
         //server: 'staging',  // dev
         //debug: true,        // dev
         server: 'https://acme-v01.api.letsencrypt.org/directory', // prod
-        configDir: path.join(__dirname, settings.leDir),
+        configDir: settings.leDir,
         approveDomains: function (opts, certs, cb) {
             opts.domains = [settings.hostname];
             opts.email = settings.leEmail;
