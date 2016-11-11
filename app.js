@@ -1,6 +1,7 @@
 'use strict';
 
 const settings = require('./bin/settings');
+const path = require('path');
 const koa = require('koa');
 const app = koa();
 const router = require('./bin/routes.js');
@@ -88,13 +89,11 @@ app
 
 if (settings.useLetsEncrypt) {
     // Configure lets encrypt and set two listening servers
-    const LEX = require('letsencrypt-express');
-
-    const lex = LEX.create({
+    const LEX = require('letsencrypt-express').create({
         //server: 'staging',  // dev
         //debug: true,        // dev
         server: 'https://acme-v01.api.letsencrypt.org/directory', // prod
-        configDir: settings.leDir,
+        configDir: path.join(__dirname, settings.leDir),
         approveDomains: function (opts, certs, cb) {
             opts.domains = [settings.hostname];
             opts.email = settings.leEmail;
@@ -108,7 +107,7 @@ if (settings.useLetsEncrypt) {
     const https = require('spdy');
     var redirectHttps = koa().use(require('koa-sslify')()).callback();
 
-    const server = https.createServer(lex.httpsOptions, LEX.middleware(app.callback()));
+    const server = https.createServer(LEX.httpsOptions, LEX.middleware(app.callback()));
     server.listen(settings.httpsPort, function () {
         console.log('Listening at :' + this.address().port);
     });
