@@ -33,7 +33,7 @@ app.use(function *onError(next) {
             message: err.message || err,
             status: err.status || 500,
             stack: err.stack || null
-        }
+        };
         console.log(err, error);
 
         if (!settings.leakStackTraces) {
@@ -88,21 +88,19 @@ app
 
 if (settings.useLetsEncrypt) {
     // Configure lets encrypt and set two listening servers
-    /* Note: using staging server url, remove .testing() for production
-    Using .testing() will overwrite the debug flag with true */
     const LEX = require('letsencrypt-express');
 
     const lex = LEX.create({
+        //server: 'staging',  // dev
+        //debug: true,        // dev
+        //server: 'https://acme-v01.api.letsencrypt.org/directory', // prod
         configDir: settings.leDir,
-        fullchainTpl: settings.leFullChainFile,
-        privkeyTpl: settings.lePrivKeyFile,
-        approveRegistration: function (hostname, cb) {
+        approveDomains: function (opts, certs, cb) {
+            opts.domains = [settings.hostname];
+            opts.email = settings.leEmail;
+            opts.agreeTos = true;
 
-            cb(null, {
-                domains: [settings.hostname],
-                email: settings.leEmail,
-                agreeTos: true
-            });
+            cb(null, {options: opts, certs: certs});
         }
     });
 
@@ -110,16 +108,17 @@ if (settings.useLetsEncrypt) {
     const https = require('spdy');
     var redirectHttps = koa().use(require('koa-sslify')()).callback();
 
-    const server = https.createServer(lex.httpsOptions, LEX.createAcmeResponder(lex, app.callback()));
-    const redirectServer = http.createServer(LEX.createAcmeResponder(lex, redirectHttps));
-
+    const server = https.createServer(lex.httpsOptions, LEX.middleware(app.callback()));
     server.listen(settings.httpsPort, function () {
-        console.log('Listening at :' +  + this.address().port);
+        console.log('Listening at :' + this.address().port);
     });
 
-    redirectServer.listen(settings.httpPort, function () {
+
+    var redirectHttps = koa().use(require('koa-sslify')()).callback();
+    http.createServer(LEX.middleware(redirectHttps)).listen(settings.httpPort, function () {
         console.log('Redirecting insecure traffic from http://' + settings.hostname + ':' + this.address().port + ' to https');
     });
+
 } else {
     // Listen on http only
     app.listen(settings.httpPort);
