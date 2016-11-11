@@ -104,7 +104,7 @@ if (settings.useLetsEncrypt) {
         }
     });
 
-    const http = require('http');
+    //const http = require('http');
     const https = require('spdy');
     var redirectHttps = koa().use(require('koa-sslify')()).callback();
 
@@ -114,10 +114,11 @@ if (settings.useLetsEncrypt) {
     });
 
 
-    var redirectHttps = koa().use(require('koa-sslify')()).callback();
+    app.listen(settings.httpPort);
+    /*var redirectHttps = koa().use(require('koa-sslify')()).callback();
     http.createServer(LEX.middleware(redirectHttps)).listen(settings.httpPort, function () {
         console.log('Redirecting insecure traffic from http://' + settings.hostname + ':' + this.address().port + ' to https');
-    });
+    });*/
 
 } else {
     // Listen on http only

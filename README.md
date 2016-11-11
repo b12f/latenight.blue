@@ -91,4 +91,4 @@ Views get the following data to be used for rendering:
 
 # Contributing
 
-Just fork and submit pull requests. Please stay true to the philosophy of "no fluff, no unnecessary extras" and please write code in the current style.
+Just fork and submit pull requests. Please stay true to the philosophy of "no fluff, no unnecessary extras" and please write code in the current style. If you feel a feature is missing open an issue, we'll see if we think it fits our philosophy.
