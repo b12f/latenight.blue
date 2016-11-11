@@ -103,7 +103,7 @@ if (settings.useLetsEncrypt) {
         }
     });
 
-    //const http = require('http');
+    const http = require('http');
     const https = require('spdy');
     var redirectHttps = koa().use(require('koa-sslify')()).callback();
 
@@ -112,12 +112,10 @@ if (settings.useLetsEncrypt) {
         console.log('Listening at :' + this.address().port);
     });
 
-
-    app.listen(settings.httpPort);
-    /*var redirectHttps = koa().use(require('koa-sslify')()).callback();
+    var redirectHttps = koa().use(require('koa-sslify')({temporary: true})).callback();
     http.createServer(LEX.middleware(redirectHttps)).listen(settings.httpPort, function () {
-        console.log('Redirecting insecure traffic from http://' + settings.hostname + ':' + this.address().port + ' to https');
-    });*/
+        console.log('Handle ACME challenge and redirect insecure traffic from http://' + settings.hostname + ':' + this.address().port + ' to https');
+    });
 
 } else {
     // Listen on http only
