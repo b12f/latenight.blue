@@ -93,7 +93,7 @@ if (settings.useLetsEncrypt) {
     const lex = LEX.create({
         //server: 'staging',  // dev
         //debug: true,        // dev
-        //server: 'https://acme-v01.api.letsencrypt.org/directory', // prod
+        server: 'https://acme-v01.api.letsencrypt.org/directory', // prod
         configDir: settings.leDir,
         approveDomains: function (opts, certs, cb) {
             opts.domains = [settings.hostname];
