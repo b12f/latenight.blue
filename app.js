@@ -105,7 +105,6 @@ if (settings.useLetsEncrypt) {
 
     const http = require('http');
     const https = require('spdy');
-    var redirectHttps = koa().use(require('koa-sslify')()).callback();
 
     const server = https.createServer(LEX.httpsOptions, LEX.middleware(app.callback()));
     server.listen(settings.httpsPort, function () {
