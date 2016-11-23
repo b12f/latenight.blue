@@ -140,21 +140,20 @@ function App() {
                 this.likedList = [];
             }
 
+            var SCsoundUrl, YTvideoId, i = 0;
+
             switch (player.getHost(player.currentSong().url)) {
                 case 'youtube':
-                    var YTvideoId = player.getYTId(player.currentSong().url);
-                    var i = 0;
-                    var SCsoundUrl;
+                    YTvideoId = player.getYTId(player.currentSong().url);
                     do {
                         SCsoundUrl = player.playlist()[i].url;
                         i++;
                     } while(player.getHost(SCsoundUrl) !== 'soundcloud' && i < player.playlist().length);
                     break;
                 case 'soundcloud':
-                    var SCsoundUrl = player.currentSong().url;
-                    var i = 0;
+                    SCsoundUrl = player.currentSong().url;
                     do {
-                        var YTvideoId = player.getYTId(player.playlist()[i].url);
+                        YTvideoId = player.getYTId(player.playlist()[i].url);
                         i++;
                     } while(YTvideoId === false && i < player.playlist().length);
                     break;
@@ -233,7 +232,7 @@ function App() {
                         return;
                     }
 
-                    SCplayerDiv.setAttribute('src', 'https://w.soundcloud.com/player/?url='+ encodeURIComponent(scApiData.uri) +'&amp;auto_play=false&amp;hide_related=true&amp;show_comments=true&amp;show_user=false&amp;show_reposts=false&amp;visual=true')
+                    SCplayerDiv.setAttribute('src', 'https://w.soundcloud.com/player/?url='+ encodeURIComponent(scApiData.uri) +'&amp;auto_play=false&amp;hide_related=true&amp;show_comments=true&amp;show_user=false&amp;show_reposts=false&amp;visual=true');
                     $('#extPlayerWrap').appendChild(SCplayerDiv);
 
                     app.player.SCPlayer = SC.Widget('SCplayer');
@@ -247,7 +246,7 @@ function App() {
                 });
             }
         },
-        
+
         /*
          * Unpauses
          */
@@ -264,8 +263,7 @@ function App() {
             }
             player.updateCallback = setInterval(function() {
                     player.updateTime();
-                }
-                , 1000);
+                }, 1000);
             $("#playpausebutton").setAttribute("class", "iconicstroke-pause");
         },
 
@@ -336,14 +334,12 @@ function App() {
                     app.showError('An error occurred. Skipping.');
                     player.next();
                     return;
-                    break;
             }
 
             $('body')[0].setAttribute('class', 'ep'+player.episode());
             player.updateCallback = setInterval(function() {
                     player.updateTime();
-                }
-                , 1000);
+                }, 1000);
 
             $("#playpausebutton").setAttribute("class", "iconicstroke-pause");
             if (addHistory) {
@@ -435,7 +431,7 @@ function App() {
             }
             else {
                 return false;
-            };
+            }
         },
 
         /*
@@ -582,7 +578,7 @@ function App() {
                         'data-episode="' + song.episode + '">' +
                         '<span class="';
                     if (player.isLiked(song.episode)) {
-                        html += 'iconicfill-heart-fill'
+                        html += 'iconicfill-heart-fill';
                     } else {
                         html += 'iconicstroke-heart-stroke';
                     }
@@ -600,7 +596,7 @@ function App() {
                 }
 
                 var buttons = $("a.song");
-                for(var i = 0; i < buttons.length; i++) {
+                for(i = 0; i < buttons.length; i++) {
                     buttons[i].addEventListener('click', function(event) {
                         if (event.target.hasAttribute("data-episode")) {
                             var episode = parseInt(event.target.getAttribute("data-episode"));
@@ -612,10 +608,11 @@ function App() {
                 buttons = $("a.like");
                 for(i = 0; i < buttons.length; i++) {
                     buttons[i].addEventListener('click', function(event) {
+                        var episode;
                         if (event.target.hasAttribute("data-episode")) {
-                            var episode = parseInt(event.target.getAttribute("data-episode"));
+                            episode = parseInt(event.target.getAttribute("data-episode"));
                         } else {
-                            var episode = parseInt(event.target.parentElement.getAttribute("data-episode"));
+                            episode = parseInt(event.target.parentElement.getAttribute("data-episode"));
                         }
 
 
@@ -936,14 +933,15 @@ function App() {
             var buttons = $("a");
             for(var i = 0; i < buttons.length; i++) {
                 buttons[i].addEventListener('click', function(event) {
+                    var funcName;
                     if (event.target.hasAttribute("data-action")) {
-                        var funcName = event.target.getAttribute("data-action");
+                        funcName = event.target.getAttribute("data-action");
                     }
                     else if (event.target.parentNode.hasAttribute("data-action")) {
-                        var funcName = event.target.parentNode.getAttribute("data-action");
+                        funcName = event.target.parentNode.getAttribute("data-action");
                     }
                     else {
-                        var funcName = event.path[1].getAttribute("data-action");
+                        funcName = event.path[1].getAttribute("data-action");
                     }
 
                     if (typeof player[funcName] === "function") {
@@ -999,14 +997,15 @@ function App() {
 
     app.getStyle =  function(el,styleProp) {
         if (!el) {return;}
+        var y;
         if (el.currentStyle) {
-            var y = el.currentStyle[styleProp];
+            y = el.currentStyle[styleProp];
         }
         else if (window.getComputedStyle) {
-            var y = document.defaultView.getComputedStyle(el,null).getPropertyValue(styleProp);
+            y = document.defaultView.getComputedStyle(el,null).getPropertyValue(styleProp);
         }
         else {
-            var y = undefined;
+            y = undefined;
         }
         return y;
     };
@@ -1022,15 +1021,15 @@ function App() {
                 callback(data, false);
             } else {
                 // We reached our target server, but it returned an error
-                callback(false, "Server responded with an error.")
+                callback(false, "Server responded with an error.");
             }
         };
         request.onerror = function(e) {
             // There was a connection error of some sort
-            callback(false, "An error occured fetching the playlist.")
+            callback(false, "An error occured fetching the playlist.");
         };
         request.send();
-    }
+    };
 
 
 }
@@ -1038,7 +1037,7 @@ function App() {
 var app;
 function onYouTubeIframeAPIReady() {
     app = new App();
-    window.onload = app.init();
+    app.init();
 }
 
 function $(q) {
