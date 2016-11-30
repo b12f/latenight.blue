@@ -21,14 +21,15 @@
     box-sizing: border-box;
 }
 html {
-  height:100%;
-  width:100%;
+    height:100%;
+    width:100%;
 }
 body {
     background-color: #6fb4df;
     background-image: url(https://images.unsplash.com/photo-1428189923803-e9801d464d76?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&s=40e43c26d48dfcaaf80670e1639c1af7);
     background-repeat: no-repeat;
     background-size: cover;
+    background-attachment: fixed;
     color: white;
     margin: 0 auto;
     font-size: 18px;
@@ -36,40 +37,19 @@ body {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    text-align: center;
 
     transition: background-color 0.2s ease-out, color 0.2s ease-out;
     -webkit-transition: background-color 0.2s ease-out, color 0.2s ease-out;
 }
-#main {
-    background: rgba(0, 0, 0, 0);
-    margin: 60px;
+
+main {
     width: 100%;
-    max-width: 600px;
-    max-height: 600px;
-    overflow: auto;
-    padding: 30px;
-    text-align: center;
-
-    transition: background-color 0.2s ease-out, color 0.2s ease-out;
-    -webkit-transition: background-color 0.2s ease-out, color 0.2s ease-out;
+    height: 100%;
+    text-align: left;
+    padding: 5vw 5vh;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
-#main:hover {
-    background: rgba(0, 0, 0, 0.4);
-}
-#main::-webkit-scrollbar {
-    width: 1em;
-}
-
-#main::-webkit-scrollbar-track {
-    background: white;
-}
-
-#main::-webkit-scrollbar-thumb {
-    background-color: #6fb4df;
-    outline: 1px solid white;
-}
-
 
 .nomargin {
     margin-left: 0px;
@@ -98,7 +78,7 @@ body {
     color: #0E6BC5
 }
 .spacer {
-  width: 10px;
+    width: 10px;
 }
 h1 {
     font-family: 'Bungee', cursive;
@@ -109,14 +89,16 @@ h1 {
     word-wrap: break-word;
 }
 header {
-  margin-bottom: 30px;
+    margin-bottom: 30px;
+    max-width: 425px;
+    text-align: center;
 }
 a{
     text-shadow: 0px 0px 5px rgba(255, 255, 255, 0);
     color: white;
     text-decoration: none;
     -webkit-transition: text-shadow 0.2s ease-in, background-color 0.2s ease-out, color 0.2s ease-out;
-            transition: text-shadow 0.2s ease-in, background-color 0.2s ease-out, color 0.2s ease-out;
+    transition: text-shadow 0.2s ease-in, background-color 0.2s ease-out, color 0.2s ease-out;
 }
 a:hover {
     text-shadow: 0px 0px 5px rgba(255, 255, 255, 0.6);
@@ -149,12 +131,14 @@ input, button {
     background: transparent;
     border-bottom: 1px solid rgba(255,255,255,0.2);
     -webkit-transition: all 0.2s ease-in;
-            transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
 }
 input[type="text"]{
     width: 100%;
     font-weight: bold;
     font-family: "Helvetica", "Arial", sans-serif;
+    color: white;
+    background-color: rgba(255, 255, 255, 0.3);
 }
 input[type="submit"], button {
     margin-top: 6px;
@@ -210,62 +194,62 @@ p {
 }
 
 .entry {
-  width: 100%;
-  overflow: hidden;
-  height: auto;
-  margin-top: 5px;
-  padding-top: 5px;
+    width: 100%;
+    overflow: hidden;
+    height: auto;
+    margin-top: 5px;
+    padding-top: 5px;
 }
-.entry a:not(.like) {
+.entry > * {
+    display: inline-block;
+    min-width: 30px;
+}
+.buttons {
+    margin-top: -5px;
     display: block;
     width: 100%;
 }
-.buttons {
-  margin-top: -5px;
-display: block;
-width: 100%;
-}
 
 #volumeWrap {
-  display: inline-block;
-  overflow: hidden;
+    display: inline-block;
+    overflow: hidden;
     text-align: left;
-  height: 28px;
-  width: 21px;
-  margin-bottom: -9px;
-  transition: width 0.2s ease-out;
-  -webkit-transition: width 0.2s ease-out;
+    height: 28px;
+    width: 21px;
+    margin-bottom: -9px;
+    transition: width 0.2s ease-out;
+    -webkit-transition: width 0.2s ease-out;
 }
 #toggleVolume {
-  font-size: 17px;
+    font-size: 17px;
 }
 #volumeWrap:hover {
-  width: 90px;
+    width: 90px;
 }
 #toggleVolumeWrap {
-  padding-top: 2px;
+    padding-top: 2px;
 }
 #volumeWrap > * {
-  height: 100%;
-  display: inline-block;
+    height: 100%;
+    display: inline-block;
 }
 #volumeBar {
-  overflow: hidden;
-  margin-bottom: 4px;
-  width: 0px;
-  height: 4px;
-  background-color: rgba(255, 255, 255, 0.3);
-  transition: width 0.25s ease-out;
-  -webkit-transition: width 0.25s ease-out;
+    overflow: hidden;
+    margin-bottom: 4px;
+    width: 0px;
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.3);
+    transition: width 0.25s ease-out;
+    -webkit-transition: width 0.25s ease-out;
 }
 #volumeWrap:hover #volumeBar {
-  width: 50px;
+    width: 50px;
 }
 #volume {
-  background-color: white;
-  height: 4px;
-  display: block;
-  float: left;
+    background-color: white;
+    height: 4px;
+    display: block;
+    float: left;
 }
 
 #playlistWrap {
@@ -286,10 +270,6 @@ width: 100%;
 #playlist > div.current > * {
     color: antiquewhite;
 }
-#playlist > div > * {
-    display: inline-block;
-    min-width: 30px;
-}
 
 @media screen and (max-device-width: 550px) {
     #playlist .song {
@@ -299,9 +279,9 @@ width: 100%;
 }
 
 @media screen and (max-device-width: 768px) {
-  #mobilewarning {
-    display: inline-block;
-  }
+    #mobilewarning {
+        display: inline-block;
+    }
     #main {
         width: 95%;
         margin: 10% auto;

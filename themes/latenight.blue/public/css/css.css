@@ -19,8 +19,8 @@
     box-sizing: border-box;
 }
 html {
-  height:100%;
-  width:100%;
+    height:100%;
+    width:100%;
 }
 body {
     background-color: #282c34;
@@ -35,10 +35,10 @@ body {
 }
 #main {
     margin: 20vh auto;
-    width: 80%;
+    width: 96%;
     max-width: 600px;
     height: auto;
-    min-height: 50vh;
+    min-height: 500px
     font-weight: normal;
     border: 16px solid white;
     padding: 50px;
@@ -74,7 +74,7 @@ body {
     color: #0E6BC5
 }
 .spacer {
-  width: 10px;
+    width: 10px;
 }
 h1 {
     font-family: "Abril Fatface", sans-serif;
@@ -85,14 +85,14 @@ h1 {
     word-wrap: break-word;
 }
 header {
-  margin-bottom: 30px;
+    margin-bottom: 30px;
 }
 a{
     text-shadow: 0px 0px 5px rgba(255, 255, 255, 0);
     color: white;
     text-decoration: none;
     -webkit-transition: text-shadow 0.2s ease-in, background-color 0.2s ease-out, color 0.2s ease-out;
-            transition: text-shadow 0.2s ease-in, background-color 0.2s ease-out, color 0.2s ease-out;
+    transition: text-shadow 0.2s ease-in, background-color 0.2s ease-out, color 0.2s ease-out;
 }
 a:hover {
     text-shadow: 0px 0px 5px rgba(255, 255, 255, 0.6);
@@ -125,7 +125,7 @@ input, button {
     background: transparent;
     border-bottom: 1px solid rgba(255,255,255,0.2);
     -webkit-transition: all 0.2s ease-in;
-            transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
 }
 input[type="text"]{
     width: 100%;
@@ -184,56 +184,56 @@ p {
 }
 
 .entry {
-  width: 100%;
-  overflow: hidden;
-  height: auto;
-  margin-top: 5px;
-  padding-top: 5px;
+    width: 100%;
+    overflow: hidden;
+    height: auto;
+    margin-top: 5px;
+    padding-top: 5px;
 }
 .buttons {
-  margin-top: -5px;
-  float: right;
+    margin-top: -5px;
+    float: right;
 }
 
 #volumeWrap {
-  display: inline-block;
-  overflow: hidden;
-  height: 28px;
-  width: 21px;
-  margin-bottom: -6px;
-  transition: width 0.2s ease-out;
-  -webkit-transition: width 0.2s ease-out;
+    display: inline-block;
+    overflow: hidden;
+    height: 28px;
+    width: 21px;
+    margin-bottom: -6px;
+    transition: width 0.2s ease-out;
+    -webkit-transition: width 0.2s ease-out;
 }
 #toggleVolume {
-  font-size: 17px;
+    font-size: 17px;
 }
 #volumeWrap:hover {
-  width: 85px;
+    width: 85px;
 }
 #toggleVolumeWrap {
-  padding-top: 2px;
+    padding-top: 2px;
 }
 #volumeWrap > * {
-  height: 100%;
-  display: inline-block;
+    height: 100%;
+    display: inline-block;
 }
 #volumeBar {
-  overflow: hidden;
-  margin-bottom: 4px;
-  width: 0px;
-  height: 4px;
-  background-color: rgba(255, 255, 255, 0.3);
-  transition: width 0.25s ease-out;
-  -webkit-transition: width 0.25s ease-out;
+    overflow: hidden;
+    margin-bottom: 4px;
+    width: 0px;
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.3);
+    transition: width 0.25s ease-out;
+    -webkit-transition: width 0.25s ease-out;
 }
 #volumeWrap:hover #volumeBar {
-  width: 50px;
+    width: 50px;
 }
 #volume {
-  background-color: white;
-  height: 4px;
-  display: block;
-  float: left;
+    background-color: white;
+    height: 4px;
+    display: block;
+    float: left;
 }
 
 #playlistWrap {
@@ -267,12 +267,12 @@ p {
 }
 
 @media screen and (max-device-width: 768px) {
-  #mobilewarning {
-    display: inline-block;
-  }
+    #mobilewarning {
+        display: inline-block;
+    }
     #main {
-        width: 95%;
-        margin: 10% auto;
+        margin-top: 10px;
+        min-height: calc(100vh - 20px);
     }
 }
 

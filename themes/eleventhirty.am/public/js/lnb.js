@@ -1030,8 +1030,6 @@ function App() {
         };
         request.send();
     };
-
-
 }
 
 var app;
