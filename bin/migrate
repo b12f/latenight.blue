@@ -1,0 +1,33 @@
+#! /usr/bin/node
+// This script migrates the old playlist/queue file structure to the new database structure
+
+const fs = require('co-fs');
+const path = require('path');
+const co = require('co');
+const db = require('lowdb')(path.join(process.cwd(), process.argv[4]));
+db._.mixin(require('underscore-db'));
+db.defaults({songs: []}).value();
+
+let playlist = [];
+
+const playlistDir = path.join(process.cwd(), process.argv[2]);
+const queueDir = path.join(process.cwd(), process.argv[3]);
+
+co(function *(){
+    let songs = yield fs.readdir(playlistDir);
+    let qsongs = yield fs.readdir(queueDir);
+
+    for (let i = 0; i < songs.length; i++) {
+        let song = require(path.join(playlistDir, songs[i]));
+        db.get('songs').insert(song).value();
+    }
+
+    for (let i = 0; i < qsongs.length; i++) {
+        let song = require(path.join(queueDir, qsongs[i]));
+        song.episode = null;
+        delete song.id;
+        db.get('songs').insert(song).value();
+    }
+
+    db.write();
+});

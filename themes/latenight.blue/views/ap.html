@@ -23,37 +23,71 @@
             <header>
                 <a href="<%= settings.baseUrl %>"><h1><%= settings.site_title %></h1></a>
             </header>
-            <form method="post">
+            <form method="post" name="addSongForm">
                 <input id="title" type="text" <% if(typeof song !== 'undefined'){%>value="<%= song.title %>"<% } %> placeholder="Title" name="title" required /><br />
                 <input id="artist" type="text" <% if(typeof song !== 'undefined'){%>value="<%= song.artist %>"<% } %> placeholder="Artist" name="artist" required /><br />
                 <input id="album" type="text" <% if(typeof song !== 'undefined'){%>value="<%= song.album %>"<% } %> placeholder="Album" name="album" required /><br />
                 <input id="url" type="text" <% if(typeof song !== 'undefined'){%>value="<%= song.url %>"<% } %> placeholder="Youtube or Soundcloud URL" name="url" required /><br />
-                <p></p>
                 <input type="submit" value="Submit" name="submit" />
             </form>
             <br />
             <hr />
             <br />
-            <form method="post">
-              <h3>Queue</h3>
-              <div id="queue">
-                <%
-                if(queue.length>0){
-                    for(var i=0; i< queue.length; i++){
-                      var queueSong = queue[i];
-                        %>
-                <div class="entry"><a href="<%= queueSong.url %>" target="_blank"><%= queueSong.artist %> - <%= queueSong.title %></a> <div class="buttons"><button type="submit" name="publishID" value="<%= queueSong.id %>">Publish</button> <button type="submit" name="deleteID" value="<%= queueSong.id %>">Delete</button></div></div>
+            <div id="tab-container">
+                <button type="button" id="queue-tab-button" class="active">Queue</button>
+                <button type="button" id="pl-tab-button">Playlist</button>
+                <div id="tabs">
+                    <form method="post" name="queueForm" id="queue">
                         <%
-                    }
-                  }
-                  else {
-                  %>
-                  <div class="entry">Queue is empty.</div>
-                  <%
-                  }
-                  %>
-              </div>
-            </form>
+                        if(queue.length>0){
+                            for(var i=0; i< queue.length; i++){
+                              var queueSong = queue[i];
+                                %>
+                        <div class="entry">
+                            <a href="<%= queueSong.url %>" target="_blank"><%= queueSong.artist %> - <%= queueSong.title %></a>
+                            <div class="buttons">
+                                <button type="submit" name="publishID" value="<%= queueSong.id %>">Publish</button>
+                                <button type="submit" name="deleteID" value="<%= queueSong.id %>">Delete</button>
+                            </div>
+                        </div>
+                                <%
+                            }
+                          }
+                          else {
+                          %>
+                          <div class="entry">Queue is empty.</div>
+                          <%
+                          }
+                          %>
+                    </form>
+                  <div id="playlist" class="hidden">
+                    <%
+                    if(playlist.length>0){
+                        for(var i=0; i< playlist.length; i++){
+                          var song = playlist[i];
+                            %>
+                    <form method="post" name="updateEpisode<%= song.episode %>Form" class="entry">
+                        <a href="<%= song.url %>" target="_blank">Episode <%= song.episode %></a>
+                        <input type="text" name="title" <% if(typeof song !== 'undefined'){%>value="<%= song.title %>"<% } %> placeholder="Title" name="title" required /><br />
+                        <input type="text" name="artist" <% if(typeof song !== 'undefined'){%>value="<%= song.artist %>"<% } %> placeholder="Artist" name="artist" required /><br />
+                        <input type="text" name="album" <% if(typeof song !== 'undefined'){%>value="<%= song.album %>"<% } %> placeholder="Album" name="album" required /><br />
+                        <input type="text" name="url" <% if(typeof song !== 'undefined'){%>value="<%= song.url %>"<% } %> placeholder="Youtube or Soundcloud URL" name="url" required /><br />
+                        <div class="buttons">
+                            <button type="submit" name="updateID" value="<%= song.id %>">Update</button>
+                        </div>
+                    </form>
+                            <%
+                        }
+                      }
+                      else {
+                      %>
+                      <div class="entry">Playlist is empty.</div>
+                      <%
+                      }
+                      %>
+                  </div>
+                </div>
+            </div>
         </main>
         <script type="text/javascript" src="/js/lnb_ap.js"></script>
     </body>

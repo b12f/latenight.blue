@@ -11,7 +11,7 @@
     <body>
         <main id="main" style="max-width: 1200px;">
             <header>
-                <a href="<%= settings.baseUrl %>"><h1>Oh noes! Error <%= error.status %></h1></a>
+                <h1>Oh noes! Error <%= error.status %></h1>
             </header>
               <p><%= error.message %></p>
               <% if (error.stack) { %>

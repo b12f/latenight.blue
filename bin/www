@@ -1,0 +1,84 @@
+#! /usr/bin/node
+
+require('../src/app.js');
+
+const Koa = require('koa');
+const log = require('debug');
+const error = log('app:error');
+const warn = log('app:warn');
+const info = log('app:info');
+const debug = log('app:debug');
+const vhost = require('koa-vhost');
+const settings = require('../src/settings.js');
+
+const main = new Koa();
+
+main.use(require('koa-compress')());
+
+// Logging
+main.use(async (ctx, next) => {
+    let t = +(new Date());
+    await next();
+    info(ctx.request.method, ctx.request.hostname, ctx.request.url, (+(new Date() - t)));
+});
+
+
+main.use(async (ctx, next) => {
+    await next();
+    if (ctx.status === 404) {
+        ctx.body = 'Domain not found on this server';
+    }
+});
+
+const sites = settings.get('sites');
+
+let vhosts = [];
+
+for (let i = 0; i < sites.length; i++) {
+    let site = sites[i];
+    info('Setting up vhost', site.hostname);
+    vhosts.push({
+        host: site.hostname,
+        app: require('../src/app.js')(site)
+    })
+}
+main.use(vhost(vhosts));
+
+
+if (settings.get('leEnabled')) {
+    debug('Using let\'s encrypt');
+
+    const le = require('greenlock-express').create({
+        server: (settings.get('env') === 'dev' ? 'staging' : 'https://acme-v01.api.letsencrypt.org/directory'),
+        configDir: require('os').homedir() + '/letsencrypt/etc',
+
+        approveDomains: function (opts, certs, cb) {
+            opts.domains = sites.map(site => site.hostname);
+            opts.email = settings.get('leEmail'); // CHANGE ME
+            opts.agreeTos = true;
+
+            info('Approving LE', sites.map(site => site.hostname));
+
+            cb(null, { options: opts, certs: certs });
+        },
+        debug: settings.get('env') === 'dev'
+    });
+
+    var server = https.createServer(le.httpsOptions, le.middleware(main.callback()));
+
+    server.listen(443, function () {
+        info('Listening at https://localhost:' + this.address().port);
+    });
+
+
+    var http = require('http');
+    var redirectHttps = koa().use(require('koa-sslify')()).callback();
+    http.createServer(le.middleware(redirectHttps)).listen(80, function () {
+        info('handle ACME http-01 challenge and redirect to https');
+    });
+} else {
+    // Listen on http only
+    main.listen(settings.get('httpPort'), function () {
+        info('Listening at http://localhost:' + settings.get('httpPort'));
+    });
+}

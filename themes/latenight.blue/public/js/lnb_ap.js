@@ -25,3 +25,17 @@ if($("#success").innerHTML !== ""){
 }
 
 $('#title').focus();
+
+$('#queue-tab-button').addEventListener('click', function () {
+    $('#queue-tab-button').classList.add('active');
+    $('#pl-tab-button').classList.remove('active');
+    $('#queue').classList.remove('hidden');
+    $('#playlist').classList.add('hidden');
+});
+
+$('#pl-tab-button').addEventListener('click', function () {
+    $('#queue-tab-button').classList.remove('active');
+    $('#pl-tab-button').classList.add('active');
+    $('#queue').classList.add('hidden');
+    $('#playlist').classList.remove('hidden');
+});

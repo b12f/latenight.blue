@@ -1,0 +1,62 @@
+'use strict';
+
+const path = require('path');
+
+module.exports = {
+    sites: [
+        {
+            hostname: 'dev1.local',
+            site_title: 'latenight.blue',
+            keywords: '',
+            description: {
+                episode: 'Ep. $$EPISODE: $$SONG_TITLE by $$ARTIST - $$SITE_TITLE - Handpicked minimal Music',
+                default: 'Handpicked minimal Music'
+            },
+            title: {
+                episode: 'Ep. $$EPISODE: $$SONG_TITLE by $$ARTIST - $$SITE_TITLE',
+                default: '$$HOSTNAME'
+            },
+
+            theme: 'latenight.blue',
+
+            apUser: 'admin',
+            apPass: 'password',
+
+            databaseFile: path.join(__dirname, 'data.latenight.blue.json'),
+            scApiId: '',
+            gaId: '',
+
+        },
+        {
+            hostname: 'dev2.local',
+            site_title: '11:30am',
+            keywords: '',
+            description: {
+                episode: 'Ep. $$EPISODE: $$SONG_TITLE by $$ARTIST - $$SITE_TITLE - Handpicked minimal Music',
+                default: 'Handpicked minimal Music'
+            },
+            title: {
+                episode: 'Ep. $$EPISODE: $$SONG_TITLE by $$ARTIST - $$SITE_TITLE',
+                default: '$$HOSTNAME'
+            },
+
+            theme: 'eleventhirty.am',
+
+            apUser: 'admin',
+            apPass: 'password',
+
+            databaseFile: path.join(__dirname, 'data.eleventhirty.am.json'),
+            scApiId: '',
+            gaId: '',
+        }
+    ],
+
+    httpPort: 80,
+    httpsPort: 3443,
+    loglevel: 4,
+
+    env: 'dev',
+
+    leEnabled: false,
+    leEmail: 'hello@example.com',
+};
