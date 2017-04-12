@@ -91,10 +91,10 @@ Admin password
 **.databaseFile: string**
 Path to the desired database File
 
-**scApiId: string (optional)**
+**.scApiId: string (optional)**
 SoundCloud API ID
 
-**gaId: string (optional)**
+**.gaId: string (optional)**
 Google Analytics ID
 
 #### httpPort: number (optional, default: 3080)
