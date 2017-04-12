@@ -1,5 +1,6 @@
 #! /usr/bin/node
-// This script migrates the old playlist/queue file structure to the new database structure
+// This script migrates the v2 playlist/queue file structure to the v3 database structure
+// Usage: migrate [playlistDir] [queueDir] [outputDbFile]
 
 const fs = require('co-fs');
 const path = require('path');

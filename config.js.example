@@ -51,7 +51,7 @@ module.exports = {
         }
     ],
 
-    httpPort: 80,
+    httpPort: 3080,
     httpsPort: 3443,
     loglevel: 4,
 

@@ -62,19 +62,19 @@ if (settings.get('leEnabled')) {
 
     var server = https.createServer(le.httpsOptions, le.middleware(main.callback()));
 
-    server.listen(443, function () {
+    server.listen(settings.get('httpsPort') || 3443, function () {
         log.info('Listening at https://localhost:' + this.address().port);
     });
 
 
     var http = require('http');
     var redirectHttps = koa().use(require('koa-sslify')()).callback();
-    http.createServer(le.middleware(redirectHttps)).listen(80, function () {
+    http.createServer(le.middleware(redirectHttps)).listen(settings.get('httpPort') || 80, function () {
         log.info('handle ACME http-01 challenge and redirect to https');
     });
 } else {
     // Listen on http only
-    main.listen(settings.get('httpPort'), function () {
-        log.info('Listening at http://localhost:' + settings.get('httpPort'));
+    main.listen(settings.get('httpPort') || 80, function () {
+        log.info('Listening at http://localhost:' + settings.get('httpPort') || 80);
     });
 }
