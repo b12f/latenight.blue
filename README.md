@@ -60,47 +60,57 @@ If you wish to run this on port 80 or 443, a good practice would be to redirect 
 
 # Config options
 
-### sites: object[]
+#### sites: object[]
 
 One object for each vhost you want to be running.
 
-#### .hostname: string
+**.hostname: string**
 Site hostname without http(s)://
-#### .site_title: string
+
+**.site_title: string**
 Site title, displayed on the homepage
-#### .keywords: string
+
+**.keywords: string**
 SEO keywords
-#### .description: object{episode: string, default: string}
+
+**.description: object{episode: string, default: string}**
 SEO description. episode for episode pages, default for homepage / error page.
-#### .title: object{episode: string, default: string}
+
+**.title: object{episode: string, default: string}**
 Same as above, for page title
-#### .theme: string
+
+**.theme: string**
 Theme name to be used
-#### .apUser: string
+
+**.apUser: string**
 Admin username
-#### .apPass: string
+
+**.apPass: string**
 Admin password
-#### .databaseFile: string
+
+**.databaseFile: string**
 Path to the desired database File
-#### scApiId: string (optional)
+
+**scApiId: string (optional)**
 SoundCloud API ID
-#### gaId: string (optional)
+
+**gaId: string (optional)**
 Google Analytics ID
 
-### httpPort: number (optional, default: 3080)
+#### httpPort: number (optional, default: 3080)
 
-### httpsPort: number (optional, default: 3443)
+#### httpsPort: number (optional, default: 3443)
 
-### loglevel: number (optional, default: 2)
+#### loglevel: number (optional, default: 2)
  * 0: Error
  * 1: Warn
  * 2: Info
  * 3: Debug
 
-### leEnabled: boolean
+#### leEnabled: boolean
 Let's Encrypt enabled flag
 
-### leEmail: string (required if leEnabled)
+#### leEmail: string (required if leEnabled)
 Email address to complete Let's Encrypt ACME callback with
 
 # Migrating
