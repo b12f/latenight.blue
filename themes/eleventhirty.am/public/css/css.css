@@ -193,6 +193,19 @@ p {
     min-width: 35px;
 }
 
+.hidden {
+    display: none;
+}
+
+#tab-container > button {
+    margin: 0px;
+    padding: 5px 30px;
+}
+
+button.active {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
 .entry {
     width: 100%;
     overflow: hidden;

@@ -3,12 +3,8 @@
 const Router = require('koa-router');
 const mount = require('koa-mount');
 const utils = require('./utils.js');
-const koaBody = require('koa-body')();
-const log = require('debug');
-const error = log('router:error');
-const warn = log('router:warn');
-const info = log('router:info');
-const debug = log('router:debug');
+const koaBody = require('koa-body');
+const log = require('./logger.js');
 
 module.exports = function (siteSettings) {
     const auth = require('koa-basic-auth')({ name: siteSettings.apUser, pass: siteSettings.apPass });
@@ -57,28 +53,30 @@ module.exports = function (siteSettings) {
         ctx.body = JSON.stringify(ctx.locals.playlist);
     });
     /* Post new song */
-    router.post('/ap', koaBody, auth, async (ctx, next) => {
+    router.post('/ap', koaBody(), auth, async (ctx, next) => {
         if (ctx.request.body.deleteID){
             let res = db.remove(ctx.request.body.deleteID);
-            if (typeof(res) === 'string') {
-                ctx.locals.error = res;
-                error(res);
+            log.debug(res);
+            if (res.length === 0) {
+                ctx.locals.error = 'Song to delete not found.';
+                log.warn('Tried to delete song ID ' + ctx.request.body.deleteID + ' not found.');
             } else {
-                let song = res;
+                let song = res[0];
                 ctx.locals.success = 'Deleted '+song.title+' by '+song.artist+' successfully from queue.';
-                info('Deleted '+song.title+' by '+song.artist+' successfully from queue.');
+                log.info('Deleted '+song.title+' by '+song.artist+' successfully from queue.');
 
             }
         }
         else if (ctx.request.body.publishID){
             let res = db.publish(ctx.request.body.publishID);
-            if (typeof(res) === 'string') {
-                ctx.locals.error = res;
-                error(res);
+            log.debug(res);
+            if (!res) {
+                ctx.locals.error = 'Song to publish not found.';
+                log.warn('Tried to publish song ID ' + ctx.request.body.publishID + ' not found.');
             } else {
                 let song = res;
                 ctx.locals.success = 'Published '+song.title+' by '+song.artist+' as episode '+song.episode+'.';
-                info('Published '+song.title+' by '+song.artist+' as episode '+song.episode+'.');
+                log.info('Published '+song.title+' by '+song.artist+' as episode '+song.episode+'.');
             }
         }
         else if (ctx.request.body.updateID) {
@@ -95,13 +93,15 @@ module.exports = function (siteSettings) {
             &&(typeof(song.album)==='string' && song.album.length > 0)
             &&(typeof(song.url)==='string' && song.url.length > 0 && song.url.startsWith('https://'))){
                 let res = db.update(song);
-                if (typeof(res) === 'string') {
-                    ctx.locals.error = res;
+                log.debug(res);
+                if (!res) {
+                    ctx.locals.error = 'Could not update';
+                    log.warn('Could not update song', song);
                     ctx.locals.song = song;
-                    error(res);
                 } else {
+                    song = res;
                     ctx.locals.success = 'Updated '+song.title+' by '+song.artist+' on episode ' +  + '.';
-                    info('Updated '+song.title+' by '+song.artist+'.');
+                    log.info('Updated '+song.title+' by '+song.artist+'.');
                 }
             }
             else{
@@ -122,13 +122,15 @@ module.exports = function (siteSettings) {
             &&(typeof(song.album)==='string' && song.album.length > 0)
             &&(typeof(song.url)==='string' && song.url.length > 0 && song.url.startsWith('https://'))){
                 let res = db.add(song);
-                if (typeof(res) === 'string') {
-                    ctx.locals.error = res;
+                log.debug(res);
+                if (!res) {
+                    ctx.locals.error = 'Could not save';
+                    log.warn('Could not save song', song);
                     ctx.locals.song = song;
-                    error(res);
                 } else {
+                    song = res;
                     ctx.locals.success = 'Saved '+song.title+' by '+song.artist+'.';
-                    info('Saved '+song.title+' by '+song.artist+'.');
+                    log.info('Saved '+song.title+' by '+song.artist+'.');
                 }
             }
             else{

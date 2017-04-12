@@ -2,29 +2,29 @@
 
 const path = require('path');
 const Koa = require('koa');
-const log = require('debug');
 const globals = require('./settings.js');
-const error = log('app:error');
-const warn = log('app:warn');
-const info = log('app:info');
-const debug = log('app:debug');
+const log = require('./logger.js');
 const kStatic = require('koa-static');
+const favicon = require('koa-favicon');
 
 module.exports = function (settings) {
     const app = new Koa();
     const router = require('./routes.js')(settings);
     const theme = require('./themes.js')(settings.theme);
     const render = require('koa-views');
-    debug('Initializing vhost app', settings.hostname);
+    log.debug('Initializing vhost app', settings.hostname);
+
+
+    app.use(favicon(path.join(theme._publicDir, 'img', 'favicon.png')));
 
     // Register the templating engine
-    debug('Using view dir', theme._viewDir);
+    log.debug('Using view dir', theme._viewDir);
     app.use(render(theme._viewDir, {
     	map: theme._settings.engineMap
     }));
 
     // Set the static serving public dir
-    debug('Using public dir', theme._publicDir);
+    log.debug('Using public dir', theme._publicDir);
     app.use(kStatic(theme._publicDir, {
         maxage: (30*24*60*60*1000),
         defer: false
@@ -41,7 +41,7 @@ module.exports = function (settings) {
                 status: err.status || 500,
                 stack: err.stack || null
             };
-            error(err, error);
+            log.error(err);
 
             if (!globals.get('env') === 'dev') {
                 err.stack = null;

@@ -1,8 +1,6 @@
 // Set app object
 console.log("<3");
 
-
-
 function App() {
 
     var app = this;
@@ -224,26 +222,28 @@ function App() {
                 SCplayerDiv.id = 'SCplayer';
                 SCplayerDiv.className = 'player';
 
-                player.getSCId(SCsoundUrl, function(scApiData, error) {
-                    if (error) {
+                player.getSCId(SCsoundUrl)
+                    .then(function (scApiData) {
+                        SCplayerDiv.setAttribute('src', 'https://w.soundcloud.com/player/?url='+ encodeURIComponent(scApiData.uri) +'&amp;auto_play=false&amp;hide_related=true&amp;show_comments=true&amp;show_user=false&amp;show_reposts=false&amp;visual=true');
+                        $('#extPlayerWrap').appendChild(SCplayerDiv);
+
+                        app.player.SCPlayer = SC.Widget('SCplayer');
+                        app.player.SCPlayer.setVolume(player.volume);
+                        app.player.SCPlayer.bind(SC.Widget.Events.READY, function onSCPlayerReady () {
+                            player.play();
+                        });
+                        app.player.SCPlayer.bind(SC.Widget.Events.ERROR, onError);
+                        app.player.SCPlayer.bind(SC.Widget.Events.PLAY, onPlayerStateChange);
+                        app.player.SCPlayer.bind(SC.Widget.Events.FINISH, player.next);
+                    })
+                    .catch(function (error) {
                         app.showError("An error occurred contacting the Soundcloud API.");
                         console.log(error);
-                        player.next();
-                        return;
-                    }
 
-                    SCplayerDiv.setAttribute('src', 'https://w.soundcloud.com/player/?url='+ encodeURIComponent(scApiData.uri) +'&amp;auto_play=false&amp;hide_related=true&amp;show_comments=true&amp;show_user=false&amp;show_reposts=false&amp;visual=true');
-                    $('#extPlayerWrap').appendChild(SCplayerDiv);
-
-                    app.player.SCPlayer = SC.Widget('SCplayer');
-                    app.player.SCPlayer.setVolume(player.volume);
-                    app.player.SCPlayer.bind(SC.Widget.Events.READY, function onSCPlayerReady () {
-                        player.play();
+                        if (player.getHost(player.currentSong().url) === 'soundcloud') {
+                            player.next();
+                        }
                     });
-                    app.player.SCPlayer.bind(SC.Widget.Events.ERROR, onError);
-                    app.player.SCPlayer.bind(SC.Widget.Events.PLAY, onPlayerStateChange);
-                    app.player.SCPlayer.bind(SC.Widget.Events.FINISH, player.next);
-                });
             }
         },
 
@@ -414,8 +414,8 @@ function App() {
          * Accepts a string url which specifies the url of the soundcloud song
          * Accepts a function callback which will receive a scApiData and error object.
          */
-        getSCId: function(url, cb) {
-            app.getJSON('https://api.soundcloud.com/resolve.json?url='+ encodeURIComponent(url) +'&client_id=' + scApiId, cb);
+        getSCId: function(url) {
+            return app.getJSON('https://api.soundcloud.com/resolve.json?url='+ encodeURIComponent(url) +'&client_id=' + scApiId);
         },
 
         /*
@@ -740,16 +740,15 @@ function App() {
      * Polls the server for a new version of the playlsit
      */
     app.updatePlaylist = function(cb) {
-        app.getJSON('playlist', function(data, errors) {
-            if (!errors) {
-                player.originalPlaylist = data;
+        app.getJSON('playlist')
+            .then(function (playlist) {
+                player.originalPlaylist = playlist;
                 cb();
-            }
-            else {
-                console.log(errors);
+            })
+            .catch(function (err) {
+                console.error(err);
                 app.showError("An error occurred updating the playlist.");
-            }
-        });
+            });
     };
 
     /*
@@ -1010,25 +1009,11 @@ function App() {
         return y;
     };
 
-
-    app.getJSON = function(url, callback) {
-        var request = new XMLHttpRequest();
-        request.open('GET', url, true);
-        request.onload = function() {
-            if (this.status >= 200 && this.status < 400) {
-                // Success!
-                var data = JSON.parse(this.response);
-                callback(data, false);
-            } else {
-                // We reached our target server, but it returned an error
-                callback(false, "Server responded with an error.");
-            }
-        };
-        request.onerror = function(e) {
-            // There was a connection error of some sort
-            callback(false, "An error occured fetching the playlist.");
-        };
-        request.send();
+    app.getJSON = function(url) {
+        return fetch(url)
+            .then(function (res) {
+                return res.json();
+            });
     };
 }
 

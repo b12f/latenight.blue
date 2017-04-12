@@ -7,7 +7,9 @@ let protocol = 'http';
 if (settings.useLetsEncrypt) {
     protocol = 'https';
 }
-settings.baseUrl = protocol + '://' + settings.hostname + '/';
+for (var i = 0; i < settings.sites.length; i++) {
+    settings.sites[i].baseUrl = protocol + '://' + settings.sites[i].hostname + '/';
+}
 
 module.exports = {
     get: function (key) {

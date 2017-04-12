@@ -3,6 +3,7 @@ const low = require('lowdb');
 
 module.exports = function (fileName) {
     const db = low(fileName);
+    db._.mixin(require('underscore-db'));
     db.defaults({songs: []})
         .write();
 
@@ -32,7 +33,7 @@ module.exports = function (fileName) {
 
     function getNextEpisode() {
         let playlist = getPlaylist();
-        return (playlist[playlist.length - 1].episode + 1);
+        return (playlist[0].episode + 1);
     }
 
     function add(song) {
@@ -44,7 +45,7 @@ module.exports = function (fileName) {
     function remove(id) {
         return db.get('songs')
             .remove({id: id})
-            .value();
+            .write();
     }
 
     function publish(id) {
@@ -53,7 +54,7 @@ module.exports = function (fileName) {
             .assign({
                 episode: getNextEpisode()
             })
-            .value();
+            .write();
     }
 
     function update(song) {
@@ -65,7 +66,7 @@ module.exports = function (fileName) {
                 album: song.album,
                 artist: song.artist
             })
-            .value();
+            .write();
     }
 
     function getPlaylist() {
@@ -83,16 +84,21 @@ module.exports = function (fileName) {
             .value();
     }
 
+    function findByEpisode(episode) {
+        return db.get('songs')
+            .find({
+                episode: parseInt(episode)
+            })
+            .value();
+    }
+
     return {
         add: add,
         remove: remove,
+        update: update,
         publish: publish,
         getPlaylist: getPlaylist,
         getQueue: getQueue,
-        findByEpisode: function (episode) {
-            db.get('posts').find({
-                episode: episode
-            }).value();
-        }
+        findByEpisode: findByEpisode
     };
 };
