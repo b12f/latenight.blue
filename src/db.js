@@ -71,7 +71,7 @@ module.exports = function (fileName) {
 
     function getPlaylist() {
         return db.get('songs')
-            .filter(song => {return song.episode !== null;})
+            .filter(song => {return typeof song.episode === 'number';})
             .sortBy('episode')
             .reverse()
             .value();
@@ -79,7 +79,7 @@ module.exports = function (fileName) {
 
     function getQueue() {
         return db.get('songs')
-            .filter(song => {return song.episode === null;})
+            .filter(song => {return typeof song.episode !== 'number';})
             .sortBy('title')
             .value();
     }

@@ -114,7 +114,8 @@ module.exports = function (siteSettings) {
                 title: ctx.request.body.title,
                 artist: ctx.request.body.artist,
                 album: ctx.request.body.album,
-                url: ctx.request.body.url
+                url: ctx.request.body.url,
+                episode: null
             }
 
             if((typeof(song.title)==='string' && song.title.length > 0)
@@ -128,7 +129,6 @@ module.exports = function (siteSettings) {
                     log.warn('Could not save song', song);
                     ctx.locals.song = song;
                 } else {
-                    song = res;
                     ctx.locals.success = 'Saved '+song.title+' by '+song.artist+'.';
                     log.info('Saved '+song.title+' by '+song.artist+'.');
                 }
