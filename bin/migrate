@@ -2,6 +2,11 @@
 // This script migrates the v2 playlist/queue file structure to the v3 database structure
 // Usage: migrate [playlistDir] [queueDir] [outputDbFile]
 
+if (process.argv.length !== 5) {
+    console.log('Usage: node migrate [playlistDir] [queueDir] [outputDbFile]');
+    process.exit(1);
+}
+
 const fs = require('co-fs');
 const path = require('path');
 const co = require('co');

@@ -22,7 +22,7 @@ module.exports = {
             apUser: 'admin',
             apPass: 'password',
 
-            databaseFile: path.join(__dirname, 'data.latenight.blue.json'),
+            databaseFile: path.join(__dirname, 'data/latenight.blue.json'),
             scApiId: '',
             gaId: '',
 
@@ -45,7 +45,7 @@ module.exports = {
             apUser: 'admin',
             apPass: 'password',
 
-            databaseFile: path.join(__dirname, 'data.eleventhirty.am.json'),
+            databaseFile: path.join(__dirname, 'data/eleventhirty.am.json'),
             scApiId: '',
             gaId: '',
         }

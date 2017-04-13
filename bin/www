@@ -43,6 +43,7 @@ main.use(vhost(vhosts));
 
 if (settings.get('leEnabled')) {
     log.debug('Using let\'s encrypt');
+    const https = require('spdy');
 
     const le = require('greenlock-express').create({
         server: (settings.get('env') === 'dev' ? 'staging' : 'https://acme-v01.api.letsencrypt.org/directory'),
@@ -60,15 +61,15 @@ if (settings.get('leEnabled')) {
         debug: settings.get('env') === 'dev'
     });
 
-    var server = https.createServer(le.httpsOptions, le.middleware(main.callback()));
+    const server = https.createServer(le.httpsOptions, le.middleware(main.callback()));
 
     server.listen(settings.get('httpsPort') || 3443, function () {
         log.info('Listening at https://localhost:' + this.address().port);
     });
 
 
-    var http = require('http');
-    var redirectHttps = koa().use(require('koa-sslify')()).callback();
+    const http = require('http');
+    const redirectHttps = (new Koa()).use(require('koa-sslify')()).callback();
     http.createServer(le.middleware(redirectHttps)).listen(settings.get('httpPort') || 80, function () {
         log.info('handle ACME http-01 challenge and redirect to https');
     });
