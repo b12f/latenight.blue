@@ -38,7 +38,7 @@ module.exports = function (fileName) {
 
     function add(song) {
         return db.get('songs')
-            .push(song)
+            .insert(song)
             .write();
     }
 
