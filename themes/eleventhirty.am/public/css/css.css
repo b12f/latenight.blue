@@ -180,13 +180,21 @@ p {
     width: 45%;
     margin-left: 5%;
 }
-.player,
+.player {
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+}
+
 #about,
 #mobilewarning {
     display: none;
 }
 .showPlayer .player.currentPlayer {
     display: block;
+    width: auto;
+    height: auto;
+    opacity: 1;
     max-width: 100%;
 }
 #timeIndex, #length {
