@@ -1,6 +1,10 @@
-# latenight.blue
+# latenight.blue [DEPRECATED]
 
-This is the source for [latenight.blue](http://latenight.blue). Lnb is a carefully curated collection of minimalist music. It aims to provide no fluff, no unnecessary extras. The code is superfast because it does almost nothing.
+This is the v3 source for [latenight.blue](https://latenight.blue) and [eleventhirty.am](https://eleventhirty.am). This code aims to provide no fluff, no unnecessary extras.
+
+## Deprecation
+
+This code has been deprecated in favour of [lnb-server](https://github.com/b12f/lnb-server), [lnb-client](https://github.com/b12f/lnb-client) and [etam-client](https://github.com/b12f/etam-client).
 
 # Features
 
